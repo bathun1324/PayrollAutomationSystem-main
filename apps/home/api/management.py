@@ -14,6 +14,8 @@ from rest_framework import status
 from apps.home.models import *
 from apps.home.serializers import *
 
+from datetime import datetime
+
 # @login_required(login_url="/login/")
 class DepartmentAPIView(APIView):
     def get(self, request):
@@ -43,15 +45,14 @@ class DepartmentAPIPost(APIView):
     def post(self, request):
         # POST 요청에서 전달된 데이터 가져오기
             data = request.data
+            now = datetime.now()
             
             corp_no = '1'
             dept_name = data.get('deptName')
             dept_status = data.get('status')
-            #reg_date = data.get('regDate')
-            reg_date = '2023-10-10'
+            reg_date = now.time()
             reg_id = data.get('regId')
-            #mod_date = data.get('modDate')
-            mod_date = '2023-10-10'
+            mod_date = now.time()
             mod_id = data.get('modId')
 
             try:
@@ -68,6 +69,28 @@ class DepartmentAPIPost(APIView):
                     cursor.execute(sql_query, [corp_no, new_dept_no, dept_name, dept_status, reg_date, reg_id, mod_date, mod_id])
 
                 return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+            except Exception as e:
+                return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+class DepartmentAPIDelete(APIView):
+    
+    def post(self, request):
+        # POST 요청에서 전달된 데이터 가져오기
+            data = request.data
+            corp_no = '1'
+            dept_no = data.get("id")
+
+            try:
+                # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+                with connection.cursor() as cursor:
+                    
+                    sql_query = """
+                    DELETE FROM HRM_DEPT WHERE dept_no = %s AND corp_no = %s
+                    """
+                    cursor.execute(sql_query, [dept_no, corp_no])
+
+                return Response({"message": "Data delete successfully"}, status=status.HTTP_201_CREATED)
 
             except Exception as e:
                 return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)

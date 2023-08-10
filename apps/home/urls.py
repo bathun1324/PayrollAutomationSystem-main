@@ -8,5 +8,6 @@ urlpatterns = [
     # The home page
     path('get_departments/', DepartmentAPIView.as_view()),
     path('post_departments/', DepartmentAPIPost.as_view()),
+    path('delete_departments/', DepartmentAPIDelete.as_view()),
     path('login/', LoginAPI.as_view()),
 ]
