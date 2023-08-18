@@ -17,4 +17,6 @@ urlpatterns = [
     # employee
     path('get_employees/', EmployeeAPIView.as_view()),
     path('post_employees/', EmployeeAPIPost.as_view()),
+    path('max_employees/', EmployeeAPIMax.as_view()),
+    path('fmly_employees/', EmployeeAPIFmly.as_view()),
 ]

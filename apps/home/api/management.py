@@ -50,9 +50,9 @@ class DepartmentAPIPost(APIView):
             corp_no = '1'
             dept_name = data.get('deptName')
             dept_status = data.get('status')
-            reg_date = now.time()
+            reg_date = '2023-01-10'
             reg_id = data.get('regId')
-            mod_date = now.time()
+            mod_date = '2023-01-10'
             mod_id = data.get('modId')
 
             try:
@@ -86,7 +86,7 @@ class DepartmentAPIDelete(APIView):
                 with connection.cursor() as cursor:
                     
                     sql_query = """
-                    DELETE FROM HRM_DEPT WHERE dept_no = %s AND corp_no = %s
+                    UPDATE FROM HRM_DEPT WHERE dept_no = %s AND corp_no = %s
                     """
                     cursor.execute(sql_query, [dept_no, corp_no])
 
