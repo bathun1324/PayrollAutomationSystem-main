@@ -23,7 +23,7 @@ class DepartmentAPIView(APIView):
         serialized_departments = []
         
         for dept in departments:
-            state = "정상" if dept.state == "1" else "비정상"
+            state = "사용" if dept.state == "1" else "미사용"
             corp_instance = ComCorp.objects.get(pk=dept.corp_no.pk)
             corp_serializer = ComCorpSerializer(corp_instance)
             serialized_dept = {
@@ -40,6 +40,31 @@ class DepartmentAPIView(APIView):
         
         return JsonResponse(serialized_departments, safe=False)
     
+class DepartmentAPISearch(APIView):
+    def get(self, request):
+        dept_id = request.GET.get('department_id', None)
+        
+        departments = HrmDept.objects.filter(dept_no = dept_id)
+        serialized_departments = []
+        
+        for dept in departments:
+            state = "사용" if dept.state == "1" else "미사용"
+            corp_instance = ComCorp.objects.get(pk=dept.corp_no.pk)
+            corp_serializer = ComCorpSerializer(corp_instance)
+            serialized_dept = {
+                "no": corp_serializer.data,
+                "id": dept.dept_no,
+                "name": dept.dept_nm,
+                "state": state,
+                "reg_dtime": dept.reg_dtime,
+                "reg_id": dept.reg_id,
+                "upt_dtime": dept.upt_dtime,
+                "upt_id": dept.upt_id
+            }
+            serialized_departments.append(serialized_dept)
+        
+        return JsonResponse(serialized_departments, safe=False)
+        
 class DepartmentAPIPost(APIView):
     
     def post(self, request):
@@ -77,20 +102,25 @@ class DepartmentAPIDelete(APIView):
     
     def post(self, request):
         # POST 요청에서 전달된 데이터 가져오기
-            data = request.data
+            data_array = request.data
+            
             corp_no = '1'
-            dept_no = data.get("id")
+            
+            for data in data_array:
+                dept_no = data
+                print("여기")
+                print(dept_no)
 
-            try:
-                # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
-                with connection.cursor() as cursor:
-                    
-                    sql_query = """
-                    UPDATE FROM HRM_DEPT WHERE dept_no = %s AND corp_no = %s
-                    """
-                    cursor.execute(sql_query, [dept_no, corp_no])
+                try:
+                    # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+                    with connection.cursor() as cursor:
+                        
+                        sql_query = """
+                        UPDATE HRM_DEPT SET state = '2' WHERE dept_no = %s AND corp_no = %s
+                        """
+                        cursor.execute(sql_query, [dept_no, corp_no])
 
-                return Response({"message": "Data delete successfully"}, status=status.HTTP_201_CREATED)
-
-            except Exception as e:
-                return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response({"message": "Data delete successfully"}, status=status.HTTP_201_CREATED)

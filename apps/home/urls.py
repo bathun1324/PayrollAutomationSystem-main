@@ -4,12 +4,15 @@ from django.views.generic import TemplateView
 from apps.home.api.management import *
 from apps.home.api.login import *
 from apps.home.api.employee import *
+from apps.home.api.attendance import *
+from apps.home.api.commutemanage import *
 
 urlpatterns = [
     # management
     path('get_departments/', DepartmentAPIView.as_view()),
     path('post_departments/', DepartmentAPIPost.as_view()),
-    #path('delete_departments/', DepartmentAPIDelete.as_view()),
+    path('delete_departments/', DepartmentAPIDelete.as_view()),
+    path('search_departments/', DepartmentAPISearch.as_view()),
     
     # login
     path('login/', LoginAPI.as_view()),
@@ -19,4 +22,10 @@ urlpatterns = [
     path('post_employees/', EmployeeAPIPost.as_view()),
     path('max_employees/', EmployeeAPIMax.as_view()),
     path('fmly_employees/', EmployeeAPIFmly.as_view()),
+    
+    # attendance
+    path('get_attendace/', AttendanceAPIView.as_view()),
+    
+    # commutemanage
+    path('get_commutemanage/', CommuteManageAPIView.as_view()),
 ]
