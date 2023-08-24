@@ -210,7 +210,7 @@ class EmployeeAPIPost(APIView):
                 with transaction.atomic():
                     with connection.cursor() as cursor:
                         
-                        cursor.execute("SELECT MAX(EMPL_NO) FROM HRM_EMPL WHERE CORP_NO = %s", [corp_no])
+                        cursor.execute("SELECT MAX(CAST(EMPL_NO AS UNSIGNED)) FROM HRM_EMPL WHERE CORP_NO = %s", [corp_no])
                         max_num = cursor.fetchone()[0]
                         max_value = (int(max_num) if max_num else 0) + 1
                         
@@ -341,6 +341,46 @@ class EmployeeAPIRate(APIView):
     
 class EmployeeAPIRole(APIView):
     def get(self, request):
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT LCODE, LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'A%'")
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "lcode": row[0],
+                "lcode_nm": row[1],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIDetailTable(APIView):
+    def get(self, request):
+        # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+        empl_id_detail = request.GET.get('empl_id_detail', None)
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT LCODE, LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'A%'")
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "lcode": row[0],
+                "lcode_nm": row[1],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIDetailTableFmly(APIView):
+    def get(self, request):
+        
+        empl_id_detail = request.GET.get('empl_id_detail', None)
 
         cursor = connection.cursor()
         cursor.execute("SELECT LCODE, LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'A%'")
