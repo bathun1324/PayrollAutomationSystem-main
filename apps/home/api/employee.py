@@ -321,3 +321,20 @@ class EmployeeAPIFmly(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             
         return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+    
+class EmployeeAPIRate(APIView):
+    def get(self, request):
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'B%'")
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "lcode_nm": row[0],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
