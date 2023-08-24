@@ -30,3 +30,8 @@ apps/home/views/manage_views.py
 apps/home/views/order_views.py
 apps/home/views/setup_views.py
 db.sqlite3
+*.xml
+*.iml
+*.json
+Pipfile
+*.lock
