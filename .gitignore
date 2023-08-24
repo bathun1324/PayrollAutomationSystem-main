@@ -29,4 +29,14 @@ apps/home/views/history_views.py
 apps/home/views/manage_views.py
 apps/home/views/order_views.py
 apps/home/views/setup_views.py
+*.xml
+*.json
+*.iml
+Pipfile
+*.lock
 db.sqlite3
+README.md
+.gitignore
+venv/Pipfile.lock
+venv/Pipfile
+README.md
