@@ -338,3 +338,21 @@ class EmployeeAPIRate(APIView):
             serialized_employees.append(serialized_empl)
         
         return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIRole(APIView):
+    def get(self, request):
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT LCODE, LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'A%'")
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "lcode": row[0],
+                "lcode_nm": row[1],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
