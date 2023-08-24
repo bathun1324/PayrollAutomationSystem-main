@@ -29,6 +29,7 @@ class EmployeeAPIView(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
+        ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
         # SQL 쿼리 실행
