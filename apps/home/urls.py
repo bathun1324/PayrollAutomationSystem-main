@@ -23,6 +23,7 @@ urlpatterns = [
     path('fmly_employees/', EmployeeAPIFmly.as_view()),
     path('get_rate/', EmployeeAPIRate.as_view()),
     path('get_role/', EmployeeAPIRole.as_view()),
+    path('search_employees/', EmployeeAPIViewSearch.as_view()),
     path('get_detailtable/', EmployeeAPIDetailTable.as_view()),
     path('get_detailattend/', EmployeeAPIDetailAttend.as_view()),
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),

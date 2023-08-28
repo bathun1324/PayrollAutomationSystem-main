@@ -66,6 +66,15 @@ class EmployeeAPIView(APIView):
     
 class EmployeeAPIViewSearch(APIView):
     def get(self, request):
+        
+        empl_dept_nm = request.GET.get('department', None)
+        empl_nm = request.GET.get('employeeName', None)
+        empl_frgnr_yn = request.GET.get('foreigner', None)
+        empl_emplym_form = request.GET.get('employmentType', None)
+        empl_hffc_state = request.GET.get('employmentStatus', None)
+        
+        print(empl_dept_nm)
+        
         sql_query = """
         SELECT *
         FROM HRM_EMPL empl
@@ -73,11 +82,34 @@ class EmployeeAPIViewSearch(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
+        WHERE 1=1
         """
+        
+        values = []
+        
+        if empl_dept_nm and empl_dept_nm != 'undefined':
+            sql_query += " AND dept.DEPT_NM = %s "
+            values.append(empl_dept_nm)
+        
+        if empl_nm and empl_nm != 'undefined':
+            sql_query += " AND empl.EMPL_NM = %s "
+            values.append(empl_nm)
+        
+        if empl_frgnr_yn and empl_frgnr_yn != 'undefined':
+            sql_query += " AND empl.FRGNR_YN = %s "
+            values.append(empl_frgnr_yn)
+        
+        if empl_emplym_form and empl_emplym_form != 'undefined':
+            sql_query += " AND empl.EMPLYM_FORM = %s "
+            values.append(empl_emplym_form)
+        
+        if empl_hffc_state and empl_hffc_state != 'undefined':
+            sql_query += " AND empl.HFFC_STATE = %s "
+            values.append(empl_hffc_state)
 
         # SQL 쿼리 실행
         cursor = connection.cursor()
-        cursor.execute(sql_query)
+        cursor.execute(sql_query, values)
         
         serialized_employees = []
         
@@ -120,7 +152,7 @@ class EmployeeAPIPost(APIView):
             
             # HRM_EMPL 테이블
             corp_no_empl = '1' #세션처리예정
-            dept_no_empl = '1' #세션처리예정
+            dept_no_empl = employee_info.get('dept_no')
             empl_nm_empl = employee_info.get('empl_nm')
             ssid_empl = employee_info.get('ssid')
             gender_empl = employee_info.get('gender')
