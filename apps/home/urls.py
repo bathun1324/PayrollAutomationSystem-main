@@ -13,10 +13,10 @@ urlpatterns = [
     path('post_departments/', DepartmentAPIPost.as_view()),
     path('delete_departments/', DepartmentAPIDelete.as_view()),
     path('search_departments/', DepartmentAPISearch.as_view()),
-    
+
     # login
     path('login/', LoginAPI.as_view()),
-    
+
     # employee
     path('get_employees/', EmployeeAPIView.as_view()),
     path('post_employees/', EmployeeAPIPost.as_view()),
@@ -28,11 +28,12 @@ urlpatterns = [
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),
     path('get_detailfrgnr/', EmployeeAPIDetailFrgnr.as_view()),
     path('get_detailtablefmly/', EmployeeAPIDetailTableFmly.as_view()),
-    
-    
+
+
     # attendance
     path('get_attendace/', AttendanceAPIView.as_view()),
-    
+
     # commutemanage
     path('get_commutemanage/', CommuteManageAPIView.as_view()),
+    path('search_commutemanage/', CommuteManageAPISearch.as_view()),
 ]
