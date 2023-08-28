@@ -107,24 +107,6 @@ class EmployeeAPIViewSearch(APIView):
         
         return JsonResponse(serialized_employees, safe=False)
     
-class EmployeeAPIMax(APIView):
-    def get(self, request):
-        corp_no = '1'
-        
-        cursor = connection.cursor()
-        cursor.execute("SELECT MAX(EMPL_NO)+1 FROM HRM_EMPL WHERE CORP_NO = %s", [corp_no])
-        
-        serialized_employees = []
-        
-        for row in cursor.fetchall():
-            serialized_empl = {
-                "no": row[0],
-            }
-            print(serialized_empl)
-            serialized_employees.append(serialized_empl)
-        
-        return JsonResponse(serialized_employees, safe=False)
-    
 class EmployeeAPIPost(APIView):
     def post(self, request):
         # POST 요청에서 전달된 데이터 가져오기
@@ -360,18 +342,120 @@ class EmployeeAPIRole(APIView):
     
 class EmployeeAPIDetailTable(APIView):
     def get(self, request):
-        # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+
         empl_id_detail = request.GET.get('empl_id_detail', None)
 
         cursor = connection.cursor()
-        cursor.execute("SELECT LCODE, LCODE_NM FROM CMM_LCODE WHERE LCODE LIKE 'A%'")
+        cursor.execute("SELECT * FROM HRM_EMPL empl JOIN HRM_DEPT dept ON empl.DEPT_NO = dept.DEPT_NO JOIN HRM_ATEND atend ON empl.EMPL_NO = atend.EMPL_NO JOIN HRM_FRGNR frgnr ON empl.EMPL_NO = frgnr.EMPL_NO WHERE empl.EMPL_NO = %s", [empl_id_detail])
         
         serialized_employees = []
         
         for row in cursor.fetchall():
             serialized_empl = {
-                "lcode": row[0],
-                "lcode_nm": row[1],
+                "dept_no": row[1], 
+                "empl_no": row[2],
+                "empl_nm": row[3],
+                "ssid": row[4],
+                "gender": row[5],
+                "brthdy": row[6],
+                "lunisolar": row[7],
+                "mrig_yn": row[8],
+                "mrig_anvsry": row[9],
+                "tel_no": row[10],
+                "mobile_no": row[11],
+                "ssid_addr": row[12],
+                "rlrsdnc_addr": row[13],
+                "email": row[14],
+                "prsl_email": row[15],
+                "exctv_yn": row[16],
+                "rspofc": row[17],
+                "emplym_form": row[18],
+                "salary_form": row[19],
+                "encpnd": row[20],
+                "hffc_state": row[21],
+                "retire_date": row[22],
+                "frgnr_yn": row[23],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIDetailAttend(APIView):
+    def get(self, request):
+
+        empl_id_detail = request.GET.get('empl_id_detail', None)
+
+        cursor = connection.cursor()
+        cursor.execute(" SELECT * FROM HRM_ATEND WHERE EMPL_NO = %s", [empl_id_detail])
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "epml_no": row[0], 
+                "corp_no": row[1],
+                "dept_no": row[2],
+                "base_attendtime": row[3],
+                "base_lvofctime": row[4],
+                "mdwk_workday": row[5],
+                "whday": row[6],
+                "crtlwh": row[7],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIDetailSalary(APIView):
+    def get(self, request):
+
+        empl_id_detail = request.GET.get('empl_id_detail', None)
+
+        cursor = connection.cursor()
+        cursor.execute(" SELECT * FROM HRM_SALARY WHERE EMPL_NO = %s", [empl_id_detail])
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "epml_no": row[0], 
+                "corp_no": row[1],
+                "dept_no": row[2],
+                "base_salary": row[3],
+                "trn_bank": row[4],
+                "acc_no": row[5],
+                "npn_pay_yn": row[6],
+                "npn_mrmrtn": row[7],
+                "hlthins_pay_yn": row[8],
+                "hlthins_mrmrtn": row[9],
+                "empins_pay_yn": row[10],
+                "empins_mrmrtn": row[11],
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+        
+        return JsonResponse(serialized_employees, safe=False)
+    
+class EmployeeAPIDetailFrgnr(APIView):
+    def get(self, request):
+
+        empl_id_detail = request.GET.get('empl_id_detail', None)
+
+        cursor = connection.cursor()
+        cursor.execute(" SELECT * FROM HRM_FRGNR WHERE EMPL_NO = %s", [empl_id_detail])
+        
+        serialized_employees = []
+        
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "epml_no": row[0], 
+                "corp_no": row[1],
+                "dept_no": row[2],
+                "dtrmcexp_date": row[3],
+                "dtrmcexp_icny": row[4],
+                "dtrmcexp_insrnc_amt": row[5],
+                "remark": row[6],
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
