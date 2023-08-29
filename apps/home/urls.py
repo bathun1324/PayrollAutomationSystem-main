@@ -6,6 +6,7 @@ from apps.home.api.login import *
 from apps.home.api.employee import *
 from apps.home.api.attendance import *
 from apps.home.api.commutemanage import *
+from apps.home.api.employeelist import *
 
 urlpatterns = [
     # management
@@ -29,6 +30,7 @@ urlpatterns = [
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),
     path('get_detailfrgnr/', EmployeeAPIDetailFrgnr.as_view()),
     path('get_detailtablefmly/', EmployeeAPIDetailTableFmly.as_view()),
+    path('get_employeelist/', EmployeeAPIView.as_view()),
 
 
     # attendance
@@ -37,4 +39,8 @@ urlpatterns = [
     # commutemanage
     path('get_commutemanage/', CommuteManageAPIView.as_view()),
     path('search_commutemanage/', CommuteManageAPISearch.as_view()),
+
+    # employeelist 직원명부
+    path('get_employeelist/', EmployeelistAPIView.as_view()),
+    path('search_employeelist/', EmployeelistAPISearch.as_view()),
 ]
