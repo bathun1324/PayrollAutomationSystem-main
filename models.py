@@ -978,7 +978,7 @@ class SlmAnntydtl(models.Model):
 
 
 class SlmInsrncrate(models.Model):
-    corp_no = models.OneToOneField(ComCorp, models.DO_NOTHING, db_column='CORP_NO', primary_key=True)  # Field name made lowercase.
+    corp_no = models.OneToOneField(ComCorp, models.DO_NOTHING, db_column='CORP_NO')  # Field name made lowercase.
     irncf_type = models.CharField(db_column='IRNCF_TYPE', max_length=2, blank=True, null=True)  # Field name made lowercase.
     std_date = models.DateField(db_column='STD_DATE', blank=True, null=True)  # Field name made lowercase.
     insrnc_rate = models.DecimalField(db_column='INSRNC_RATE', max_digits=5, decimal_places=3, blank=True, null=True)  # Field name made lowercase.

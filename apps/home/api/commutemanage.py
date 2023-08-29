@@ -69,33 +69,33 @@ class CommuteManageAPISearch(APIView):
     def get(self, request):
         empl_name = request.GET.get('employee_name', None)
         empl_no = request.GET.get('employee_no', None)
+        
+        values = []
+        
         sql_query = """
             SELECT *
             FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
             WHERE empl.EMPL_NO = atend.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO 
             """
         if(empl_no and empl_name and empl_no != 'undefined' and empl_name != 'undefined'):
-            sql_query = """
-            SELECT *
-            FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
-            WHERE empl.EMPL_NO = atend.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
-            AND empl.EMPL_NM = '""" + empl_name + """' AND empl.EMPL_NO = '""" + empl_no + """'"""
+            sql_query += """
+            AND empl.EMPL_NM = %s AND empl.EMPL_NO = %s
+            """
+            values.append(empl_name)
+            values.append(empl_no)
         elif(empl_no and empl_no != 'undefined'):
-            sql_query = """
-            SELECT *
-            FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
-            WHERE empl.EMPL_NO = atend.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
-            AND empl.EMPL_NO = '""" + empl_no + """'"""
+            sql_query += """
+            AND empl.EMPL_NO = %s """
+            values.append(empl_no)
         else:
             print("empl_name->", empl_name)
-            sql_query = """
+            sql_query += """
             SELECT *
-            FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
-            WHERE empl.EMPL_NO = atend.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
-            AND empl.EMPL_NM = '""" + empl_name + """'"""
+            AND empl.EMPL_NM = %s """
+            values.append(empl_name)
         # SQL 쿼리 실행
         cursor = connection.cursor()
-        cursor.execute(sql_query)
+        cursor.execute(sql_query, values)
 
         serialized_employees = []
 
@@ -125,8 +125,3 @@ class CommuteManageAPISearch(APIView):
             serialized_employees.append(serialized_empl)
 
         return JsonResponse(serialized_employees, safe=False)
-        # print(employees)
-        # for empl in employees:
-        #    corp_instance = ComCorp.objects.get(pk=empl.corp_no.pk)
-        #    corp_serializer = ComCorpSerializer(corp_instance)
-        #    serialized_empl
