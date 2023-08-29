@@ -90,7 +90,6 @@ class CommuteManageAPISearch(APIView):
         else:
             print("empl_name->", empl_name)
             sql_query += """
-            SELECT *
             AND empl.EMPL_NM = %s """
             values.append(empl_name)
         # SQL 쿼리 실행
