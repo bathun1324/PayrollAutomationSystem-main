@@ -128,3 +128,50 @@ class EmployeelistAPISearch(APIView):
             serialized_employeelist.append(serialized_empl)
 
         return JsonResponse(serialized_employeelist, safe=False)
+
+
+class RetireemployeelistAPIView(APIView):
+    def get(self, request):
+        sql_query = """
+        SELECT *, ABS(TIMESTAMPDIFF(DAY, empl.ENCPND, empl.RETIRE_DATE))
+        FROM HRM_EMPL empl
+        JOIN HRM_DEPT dept
+        ON empl.DEPT_NO = dept.DEPT_NO
+        JOIN HRM_SALARY sal
+        ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "퇴사"
+        ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
+        """
+
+        # SQL 쿼리 실행
+        cursor = connection.cursor()
+        cursor.execute(sql_query)
+
+        serialized_retireemployeelist = []
+
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "no": row[0],  # 회사번호
+                "id": row[1],  # 부서번호
+                "empl_no": row[2],  # 사원번호
+                "empl_nm": row[3],  # 사원명
+                "empl_ssid": row[4],  # 주민번호
+                "empl_gender": row[5],  # 성별
+                "empl_telno": row[11],  # 전화번호
+                "empl_ssid_addr": row[12],  # 실거주지
+                "empl_email": row[13],  # 이메일
+                "empl_rspofc": row[17],  # 직책
+                "empl_emplym_form": row[18],  # 고용형태
+                "empl_salary_form": row[19],  # 급여형태
+                "empl_encpnd": row[20],  # 입사일
+                "empl_hffc_state": row[21],  # 재직상태
+                "empl_retire_date": row[22],  # 퇴사일자
+                "empl_frgnr_yn": row[23],  # 외국인여부
+                "empl_dept_nm": row[30],  # 부서이름
+                "empl_bank": row[40],  # 은행
+                "empl_acc": row[41],  # 계좌번호
+                "empl_period": row[50],  # 재직기간
+            }
+            print(serialized_empl)
+            serialized_retireemployeelist.append(serialized_empl)
+
+        return JsonResponse(serialized_retireemployeelist, safe=False)

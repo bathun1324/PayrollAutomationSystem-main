@@ -43,4 +43,5 @@ urlpatterns = [
     # employeelist 직원명부
     path('get_employeelist/', EmployeelistAPIView.as_view()),
     path('search_employeelist/', EmployeelistAPISearch.as_view()),
+    path('get_retireemployeelist/', RetireemployeelistAPIView.as_view()),
 ]
