@@ -150,6 +150,8 @@ class EmployeeAPIPost(APIView):
         attend_info = data.get('attendInfo')
         salary_info = data.get('salaryInfo')
         frgnr_info = data.get('frgnrInfo')
+        
+        print(employee_info)
 
         # HRM_EMPL 테이블
         corp_no_empl = '1'  # 세션처리예정
@@ -183,7 +185,7 @@ class EmployeeAPIPost(APIView):
         # HRM_ATEND 테이블
         # empl_no_atend = '1' #필요없음
         corp_no_atend = '1'  # 세션처리예정
-        dept_no_atend = '1'  # 세션처리예정
+        dept_no_atend = employee_info.get('dept_no')  # 세션처리예정
         base_attendtime_atend = attend_info.get('base_attendtime')
         base_lvofctime_atend = attend_info.get('base_lvofctime')
         mdwk_workday_atend = attend_info.get('mdwk_workday')
@@ -195,7 +197,7 @@ class EmployeeAPIPost(APIView):
         # HRM_SALARY 테이블
         # empl_no_salary = '1' #필요없음
         corp_no_salary = '1'  # 세션처리예정
-        dept_no_salary = '1'  # 세션처리예정
+        dept_no_salary = employee_info.get('dept_no')  # 세션처리예정
         base_salary_salary = salary_info.get('base_salary')
         trn_bank_salary = salary_info.get('trn_bank')
         acc_no_salary = salary_info.get('acc_no')
@@ -211,7 +213,7 @@ class EmployeeAPIPost(APIView):
         # HRM_FRGNR 테이블
         empl_no_frgnr = '1'  # 세션처리예정
         corp_no_frgnr = '1'  # 세션처리예정
-        dept_no_frgnr = '1'  # 세션처리예정
+        dept_no_frgnr = employee_info.get('dept_no')  # 세션처리예정
         dtrmcexp_date_frgnr = frgnr_info.get('dtrmcexp_date')
         dtrmcexp_icny_frgnr = frgnr_info.get('dtrmcexp_icny')
         dtrmcexp_insrnc_amt_frgnr = frgnr_info.get('dtrmcexp_insrnc_amt')
