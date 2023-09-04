@@ -672,6 +672,8 @@ class EmployeeupdateAPIPost(APIView):
                         corp_no_frgnr, dept_no_frgnr, dtrmcexp_date_frgnr,
                         dtrmcexp_icny_frgnr, dtrmcexp_insrnc_amt_frgnr, remark_frgnr, upt_dtime_frgnr, upt_id_frgnr, empl_no
                     ])
+                    # 외래키 제약조건 활성화
+                    cursor.execute("SET FOREIGN_KEY_CHECKS=1")
 
             return Response({"message": "Data updated successfully"}, status=status.HTTP_201_CREATED)
 
