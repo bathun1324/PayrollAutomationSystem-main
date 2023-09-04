@@ -21,6 +21,7 @@ urlpatterns = [
     # employee
     path('get_employees/', EmployeeAPIView.as_view()),
     path('post_employees/', EmployeeAPIPost.as_view()),
+    path('post_employeesupdate/', EmployeeupdateAPIPost.as_view()),
     path('fmly_employees/', EmployeeAPIFmly.as_view()),
     path('get_rate/', EmployeeAPIRate.as_view()),
     path('get_role/', EmployeeAPIRole.as_view()),
