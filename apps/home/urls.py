@@ -31,7 +31,6 @@ urlpatterns = [
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),
     path('get_detailfrgnr/', EmployeeAPIDetailFrgnr.as_view()),
     path('get_detailtablefmly/', EmployeeAPIDetailTableFmly.as_view()),
-    path('get_employeelist/', EmployeeAPIView.as_view()),
 
 
     # attendance

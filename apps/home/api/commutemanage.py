@@ -27,6 +27,7 @@ class CommuteManageAPIView(APIView):
         SELECT *
         FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
         WHERE empl.EMPL_NO = atend.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
+        ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
         # SQL 쿼리 실행
@@ -69,9 +70,9 @@ class CommuteManageAPISearch(APIView):
     def get(self, request):
         empl_name = request.GET.get('employee_name', None)
         empl_no = request.GET.get('employee_no', None)
-        
+
         values = []
-        
+
         sql_query = """
             SELECT *
             FROM HRM_EMPL empl, HRM_ATEND atend, HRM_DEPT dept
@@ -93,6 +94,7 @@ class CommuteManageAPISearch(APIView):
             AND empl.EMPL_NM = %s """
             values.append(empl_name)
         # SQL 쿼리 실행
+        sql_query += """ ORDER BY CAST(empl.EMPL_NO AS UNSIGNED) """
         cursor = connection.cursor()
         cursor.execute(sql_query, values)
 
