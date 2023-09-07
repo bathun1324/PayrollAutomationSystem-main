@@ -37,7 +37,7 @@ DEBUG = env('DEBUG')
 # Assets Management
 ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets') 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['13.125.117.184', 'localhost', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1', 'https://' + env('SERVER', default='127.0.0.1') ]
 
 
@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'config.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
@@ -168,5 +169,5 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:3000', 'http://localhost:3000')
+CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:3000','http://127.0.0.1:8000', 'http://localhost:3000','http://13.125.117.184', 'http://13.125.117.184:3000', 'http://13.125.117.184:8000')
 CORS_ALLOW_CREDENTIALS = True
