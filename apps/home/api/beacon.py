@@ -90,7 +90,7 @@ class BeaconAPIPost(APIView):
         # uptdtime = data.get("uptdtime")
         # uptid = data.get("uptid")
         
-        # corp_no = "1"
+        # corp_no = "11"
         # dept_no = "1"
         # empl_no = "1"
         # work_date = "1"
