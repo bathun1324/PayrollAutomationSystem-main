@@ -57,4 +57,77 @@ class AttendanceAPIView(APIView):
             serialized_employees.append(serialized_empl)
         
         return JsonResponse(serialized_employees, safe=False)
+
+class BeaconAPIPost(APIView):    
+    def post(self, request):
+        
+        data = request.data
+        
+        print(data.get("atend_time"))
+        
+        # no = data.get("no")
+        # id = data.get("id")
+        # empl_no = data.get("empl_no")
+        # work_date = data.get("work_date")
+        # work_sch = data.get("work_sch")
+        # atend_time = data.get("atend_time")
+        # lvofc_time = data.get("lvofc_time")
+        # gnot = data.get("gnot")
+        # rtn = data.get("rtn")
+        # atend_jdgmnt = data.get("atend_jdgmnt")
+        # lvofc_jdgmnt = data.get("lvofc_jdgmnt")
+        # laten_time = data.get("laten_time")
+        # gnot_time = data.get("gnot_time")
+        # elpd_atend = data.get("elpd_atend")
+        # extn_work = data.get("extn_work")
+        # night_work = data.get("night_work")
+        # hday_work = data.get("hday_work")
+        # realwork_time = data.get("realwork_time")
+        # remark = data.get("remark")
+        # regdtime = data.get("regdtime")
+        # regid = data.get("regid")
+        # uptdtime = data.get("uptdtime")
+        # uptid = data.get("uptid")
+        
+        # corp_no = "1"
+        # dept_no = "1"
+        # empl_no = "1"
+        # work_date = "1"
+        # work_sch = "1"
+        # atend_time = data.get("atend_time")
+        # lvofc_time = "1"
+        # gnot = "1"
+        # rtn = "1"
+        # atend_jdgmnt = "1"
+        # lvofc_jdgmnt = "1"
+        # laten_time = "1"
+        # gnot_time = "1"
+        # elpd_atend = "1"
+        # extn_work = "1"
+        # night_work = "1"
+        # hday_work = "1"
+        # realwork_time = "1"
+        # remark = "1"
+        # regdtime = "1"
+        # regid = "1"
+        # uptdtime = "1"
+        # uptid = "1"
+
+        # try:
+        #         # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+        #         with connection.cursor() as cursor:
+        #             # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+        #             # max_dept_no = cursor.fetchone()[0]
+        #             # new_dept_no = (max_dept_no or 0) + 1
+                    
+        #             sql_query = """
+        #             INSERT INTO HRM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
+        #             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        #             """
+        #             cursor.execute(sql_query, [corp_no, dept_no, empl_no, work_date, work_sch, atend_time, lvofc_time, gnot])
+
+        #         return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+        # except Exception as e:
+        #         return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
     

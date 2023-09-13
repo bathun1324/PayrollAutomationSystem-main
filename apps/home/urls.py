@@ -7,6 +7,7 @@ from apps.home.api.employee import *
 from apps.home.api.attendance import *
 from apps.home.api.commutemanage import *
 from apps.home.api.employeelist import *
+from apps.home.api.beacon import *
 
 urlpatterns = [
     # management
@@ -45,4 +46,8 @@ urlpatterns = [
     path('search_employeelist/', EmployeelistAPISearch.as_view()),
     path('get_retireemployeelist/', RetireemployeelistAPIView.as_view()),
     path('search_retireemployeelist/', RetireemployeelistAPISearch.as_view()),
+    
+    # beacon 비콘
+    path('get_employeelist/', BeaconAPIPost.as_view()),
+    
 ]
