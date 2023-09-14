@@ -82,7 +82,7 @@ class EmployeelistAPISearch(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
-        WHERE 1=1
+        WHERE empl.HFFC_STATE IN("재직", "휴직")
         """
         values = []
 
