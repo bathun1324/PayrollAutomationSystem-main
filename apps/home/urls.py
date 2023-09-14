@@ -48,6 +48,6 @@ urlpatterns = [
     path('search_retireemployeelist/', RetireemployeelistAPISearch.as_view()),
     
     # beacon 비콘
-    path('get_employeelist/', BeaconAPIPost.as_view()),
+    path('get_beaconcheck/', BeaconAPIPost.as_view()),
     
 ]
