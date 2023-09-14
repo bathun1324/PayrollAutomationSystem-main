@@ -169,5 +169,14 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ORIGIN_WHITELIST = ('http://127.0.0.1:3000','http://127.0.0.1:8000', 'http://localhost:3000','http://13.125.117.184', 'http://13.125.117.184:3000', 'http://13.125.117.184:8000')
+CORS_ORIGIN_WHITELIST = [
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8081',
+    'http://127.0.0.1:8000',
+    'http://localhost:3000',
+    'http://13.125.117.184',
+    'http://13.125.117.184:3000',
+    'http://13.125.117.184:8000',
+    'http://13.125.117.184:8081',
+]
 CORS_ALLOW_CREDENTIALS = True

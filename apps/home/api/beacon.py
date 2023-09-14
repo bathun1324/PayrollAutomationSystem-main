@@ -20,7 +20,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class AttendanceAPIView(APIView):
+class BeaconAPIView(APIView):
     def get(self, request):
         sql_query = """
         SELECT *
@@ -58,16 +58,13 @@ class AttendanceAPIView(APIView):
         
         return JsonResponse(serialized_employees, safe=False)
 
-class BeaconAPIPost(APIView):    
+class BeaconAPIPost(APIView):
     def post(self, request):
         
         data = request.data
         
-        print('this')
-        print(data.get("atend_time"))
-        
-        # no = data.get("no")
-        # id = data.get("id")
+        # corp_no = data.get("corp_no")
+        # dept_no = data.get("dept_no")
         # empl_no = data.get("empl_no")
         # work_date = data.get("work_date")
         # work_sch = data.get("work_sch")
@@ -90,45 +87,44 @@ class BeaconAPIPost(APIView):
         # uptdtime = data.get("uptdtime")
         # uptid = data.get("uptid")
         
-        # corp_no = "11"
-        # dept_no = "1"
-        # empl_no = "1"
-        # work_date = "1"
-        # work_sch = "1"
-        # atend_time = data.get("atend_time")
-        # lvofc_time = "1"
-        # gnot = "1"
-        # rtn = "1"
-        # atend_jdgmnt = "1"
-        # lvofc_jdgmnt = "1"
-        # laten_time = "1"
-        # gnot_time = "1"
-        # elpd_atend = "1"
-        # extn_work = "1"
-        # night_work = "1"
-        # hday_work = "1"
-        # realwork_time = "1"
-        # remark = "1"
-        # regdtime = "1"
-        # regid = "1"
-        # uptdtime = "1"
-        # uptid = "1"
+        corp_no="1",
+        dept_no="1",
+        empl_no="1",
+        work_date="2023-11-11",
+        work_sch="",
+        atend_time="2023-11-11 12:00:00",
+        lvofc_time="2023-11-11 12:00:00",
+        gnot="2023-11-11 12:00:00",
+        rtn="2023-11-11 12:00:00",
+        atend_jdgmnt="",
+        lvofc_jdgmnt="",
+        laten_time="12:00:00",
+        gnot_time="12:00:00",
+        elpd_atend="12:00:00",
+        extn_work="12:00:00",
+        night_work="12:00:00",
+        hday_work="12:00:00",
+        realwork_time="12:00:00",
+        remark="",
+        regdtime="2023-11-11 12:00:00",
+        regid="",
+        uptdtime="2023-11-11 12:00:00",
+        uptid=""
 
-        # try:
-        #         # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
-        #         with connection.cursor() as cursor:
-        #             # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
-        #             # max_dept_no = cursor.fetchone()[0]
-        #             # new_dept_no = (max_dept_no or 0) + 1
+        try:
+                # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+                with connection.cursor() as cursor:
+                    # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+                    # max_dept_no = cursor.fetchone()[0]
+                    # new_dept_no = (max_dept_no or 0) + 1
                     
-        #             sql_query = """
-        #             INSERT INTO HRM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
-        #             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        #             """
-        #             cursor.execute(sql_query, [corp_no, dept_no, empl_no, work_date, work_sch, atend_time, lvofc_time, gnot])
+                    sql_query = " INSERT INTO ATM_DALY VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql_query, [corp_no, dept_no, empl_no, work_date, work_sch, atend_time, lvofc_time, gnot
+                                            , rtn, atend_jdgmnt, lvofc_jdgmnt, laten_time, gnot_time, elpd_atend, extn_work, night_work, hday_work, realwork_time, remark, regdtime,
+                                            regid, uptdtime, uptid])
 
-        #         return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+                return Response({"message":"Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
-        # except Exception as e:
-        #         return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+                return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
