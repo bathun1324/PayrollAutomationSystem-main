@@ -64,7 +64,7 @@ class BeaconAPIPost(APIView):
         data = request.data
         
         print('this')
-        print(data.get("atend_time"))
+        print(data.get("atend_times"))
         
         # no = data.get("no")
         # id = data.get("id")
