@@ -14,6 +14,8 @@ from apps.home.serializers import *
 from django.db.models import Max
 from django.shortcuts import render, redirect
 from django.contrib.auth import *
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 import json
 
@@ -27,8 +29,23 @@ class LoginAPI(APIView):
             password = data.get('password')
             
             # CMM_LOGIN에 있는 아이디와 비밀번호 비교 로직 구현
-            if self.is_valid_login(username, password): 
-                return JsonResponse({'message': '로그인 성공'})
+            if self.is_valid_login(username, password):
+                user = self.get_user_info(username, password)  # CmmLogin 모델에서 사용자 정보 가져오기
+                refresh = RefreshToken.for_user(user)
+
+                return JsonResponse({
+                    'message': '로그인 성공',
+                    'access_token': str(refresh.access_token),
+                    'refresh_token': str(refresh),
+                    'user_info': {
+                        'login_id': user.login_id,
+                        'perm' : user.perm,
+                        'empl_no': user.empl_no,
+                        'corp_no' : user.corp_no,
+                        'dept_no ' : user.dept_no,
+                        # 추가로 포함시키고 싶은 필드들을 여기에 추가
+                    }
+                })
             else:
                 return JsonResponse({'message': '로그인 실패'}, status=401)
         except Exception as e:

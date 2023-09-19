@@ -1,6 +1,7 @@
 from django.urls import path, re_path
 from apps.home import views
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.home.api.department import *
 from apps.home.api.login import *
 from apps.home.api.employee import *
@@ -10,6 +11,10 @@ from apps.home.api.employeelist import *
 from apps.home.api.beacon import *
 
 urlpatterns = [
+    # JWT Token
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
     # management
     path('get_departments/', DepartmentAPIView.as_view()),
     path('post_departments/', DepartmentAPIPost.as_view()),

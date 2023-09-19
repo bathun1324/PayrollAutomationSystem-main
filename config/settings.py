@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
     #rest api
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
 
     'django.contrib.admin',
@@ -72,6 +73,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_USE_JWT = True
 CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'config.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
@@ -122,6 +124,10 @@ else:
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
