@@ -2,6 +2,8 @@ from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
+import json
+import secrets
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -16,6 +18,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import *
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken
 
 import json
 
@@ -29,9 +32,13 @@ class LoginAPI(APIView):
             password = data.get('password')
             
             # CMM_LOGIN에 있는 아이디와 비밀번호 비교 로직 구현
-            if self.is_valid_login(username, password):
-                user = self.get_user_info(username, password)  # CmmLogin 모델에서 사용자 정보 가져오기
-                refresh = RefreshToken.for_user(user)
+            user = self.is_valid_login(username, password)
+            if user:
+                user = self.is_valid_login(username, password)  # CmmLogin 모델에서 사용자 정보 가져오기
+                refresh = RefreshToken()
+                access = AccessToken()
+                access.access_token = self.generate_access_token(user)
+                refresh.refresh_token = self.generate_refresh_token(user) 
 
                 return JsonResponse({
                     'message': '로그인 성공',
@@ -49,7 +56,16 @@ class LoginAPI(APIView):
             else:
                 return JsonResponse({'message': '로그인 실패'}, status=401)
         except Exception as e:
+            print(f'에러 발생: {e}')
             return JsonResponse({'message': '에러 발생'}, status=500)
+        
+    @staticmethod
+    def generate_access_token(user):
+        return secrets.token_urlsafe(32)
+    
+    @staticmethod
+    def generate_refresh_token(user):
+        return secrets.token_urlsafe(64)
     
     def is_valid_login(self, username, password):
         # CMM_LOGIN에 있는 아이디와 비밀번호를 확인하는 로직을 구현합니다.
@@ -58,15 +74,10 @@ class LoginAPI(APIView):
         try:
             cmm_user = CmmLogin.objects.get(login_id=username)
             if cmm_user.login_pwd == password:
-                return True
+                return cmm_user
         except CmmLogin.DoesNotExist:
             return False
         
         return False
-
-    
-
-
-
 
 
