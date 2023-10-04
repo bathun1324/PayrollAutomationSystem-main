@@ -55,5 +55,5 @@ urlpatterns = [
     # beacon 비콘
     path('get_beaconcheck/', BeaconAPIView.as_view()),
     path('post_beaconcheck/', BeaconAPIPost.as_view()),
-    
+    path('post_beaconcheck_ex/', BeaconAPIPostEx.as_view()),
 ]

@@ -25,7 +25,7 @@ class AttendanceAPIView(APIView):
         sql_query = """
         SELECT *
         FROM HRM_EMPL empl, ATM_DALY daly, HRM_DEPT dept
-        WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
+        WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO ORDER BY ATEND_TIME DESC
         """
 
         # SQL 쿼리 실행

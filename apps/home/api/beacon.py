@@ -61,70 +61,108 @@ class BeaconAPIView(APIView):
 class BeaconAPIPost(APIView):
     def post(self, request):
         
+        now = datetime.now()
+        works= now.strftime('%Y-%m-%d')
+        work_dates = now.strftime('%Y-%m-%d %H:%M:%S')
+        
         data = request.data
         
-        # corp_no = data.get("corp_no")
-        # dept_no = data.get("dept_no")
-        # empl_no = data.get("empl_no")
-        # work_date = data.get("work_date")
-        # work_sch = data.get("work_sch")
-        # atend_time = data.get("atend_time")
-        # lvofc_time = data.get("lvofc_time")
-        # gnot = data.get("gnot")
-        # rtn = data.get("rtn")
-        # atend_jdgmnt = data.get("atend_jdgmnt")
-        # lvofc_jdgmnt = data.get("lvofc_jdgmnt")
-        # laten_time = data.get("laten_time")
-        # gnot_time = data.get("gnot_time")
-        # elpd_atend = data.get("elpd_atend")
-        # extn_work = data.get("extn_work")
-        # night_work = data.get("night_work")
-        # hday_work = data.get("hday_work")
-        # realwork_time = data.get("realwork_time")
-        # remark = data.get("remark")
-        # regdtime = data.get("regdtime")
-        # regid = data.get("regid")
-        # uptdtime = data.get("uptdtime")
-        # uptid = data.get("uptid")
+        corp_no = int(data.get("corp_no"))
+        dept_no = int(data.get("dept_no"))
+        empl_no = data.get("empl_no")
+        work_date = works
+        work_sch = data.get("work_sch")
+        atend_time = work_dates
+        lvofc_time = work_dates
+        gnot = data.get("gnot")
+        rtn = data.get("rtn")
+        atend_jdgmnt = '출근'
+        lvofc_jdgmnt = '퇴근'
+        laten_time = data.get("laten_time")
+        gnot_time = data.get("gnot_time")
+        elpd_atend = data.get("elpd_atend")
+        extn_work = data.get("extn_work")
+        night_work = data.get("night_work")
+        hday_work = data.get("hday_work")
+        realwork_time = data.get("realwork_time")
+        remark = data.get("remark")
+        regdtime = work_dates
+        regid = data.get("regid")
+        uptdtime = work_dates
+        uptid = data.get("uptid")
         
-        corp_no="1",
-        dept_no="1",
-        empl_no="1",
-        work_date="2023-11-11",
-        work_sch="",
-        atend_time="2023-11-11 12:00:00",
-        lvofc_time="2023-11-11 12:00:00",
-        gnot="2023-11-11 12:00:00",
-        rtn="2023-11-11 12:00:00",
-        atend_jdgmnt="",
-        lvofc_jdgmnt="",
-        laten_time="12:00:00",
-        gnot_time="12:00:00",
-        elpd_atend="12:00:00",
-        extn_work="12:00:00",
-        night_work="12:00:00",
-        hday_work="12:00:00",
-        realwork_time="12:00:00",
-        remark="",
-        regdtime="2023-11-11 12:00:00",
-        regid="",
-        uptdtime="2023-11-11 12:00:00",
-        uptid=""
+        print(corp_no)
+        print(dept_no)
 
         try:
                 # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
                 with connection.cursor() as cursor:
-                    # cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+                    cursor.execute("SELECT WORK_DATE, ATEND_TIME FROM ATM_DALY WHERE EMPL_NO = %s AND WORK_DATE = %s", [empl_no, works])
+                    result = cursor.fetchone()
                     # max_dept_no = cursor.fetchone()[0]
                     # new_dept_no = (max_dept_no or 0) + 1
                     
-                    sql_query = " INSERT INTO ATM_DALY VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql_query, [corp_no, dept_no, empl_no, work_date, work_sch, atend_time, lvofc_time, gnot
-                                            , rtn, atend_jdgmnt, lvofc_jdgmnt, laten_time, gnot_time, elpd_atend, extn_work, night_work, hday_work, realwork_time, remark, regdtime,
-                                            regid, uptdtime, uptid])
+                    # times = result[1]
+                    
+                    sql_query = " INSERT INTO ATM_DALY VALUES (%s, %s, %s, %s, %s, %s, null, null, null, %s, null, null, null, null, null, null, null, null, %s, %s, %s, %s, %s)"
+                    cursor.execute(sql_query, [corp_no, dept_no, empl_no, work_date, work_sch, atend_time, atend_jdgmnt, remark, regdtime,
+                                        regid, uptdtime, uptid])
 
                 return Response({"message":"Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
                 return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+class BeaconAPIPostEx(APIView):
+    def post(self, request):
+        
+        now = datetime.now()
+        works= now.strftime('%Y-%m-%d')
+        work_dates = now.strftime('%Y-%m-%d %H:%M:%S')
+        
+        data = request.data
+        
+        corp_no = int(data.get("corp_no"))
+        dept_no = int(data.get("dept_no"))
+        empl_no = data.get("empl_no")
+        work_date = works
+        work_sch = data.get("work_sch")
+        atend_time = work_dates
+        lvofc_time = work_dates
+        gnot = data.get("gnot")
+        rtn = data.get("rtn")
+        atend_jdgmnt = '출근'
+        lvofc_jdgmnt = '퇴근'
+        laten_time = data.get("laten_time")
+        gnot_time = data.get("gnot_time")
+        elpd_atend = data.get("elpd_atend")
+        extn_work = data.get("extn_work")
+        night_work = data.get("night_work")
+        hday_work = data.get("hday_work")
+        realwork_time = data.get("realwork_time")
+        remark = data.get("remark")
+        regdtime = work_dates
+        regid = data.get("regid")
+        uptdtime = work_dates
+        uptid = data.get("uptid")
+        
+        print(corp_no)
+        print(dept_no)
+
+        try:
+                # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT WORK_DATE, ATEND_TIME FROM ATM_DALY WHERE EMPL_NO = %s AND WORK_DATE = %s", [empl_no, works])
+                    result = cursor.fetchone()
+                    # max_dept_no = cursor.fetchone()[0]
+                    # new_dept_no = (max_dept_no or 0) + 1
+                    
+                    # times = result[1]
+                    
+                    sql_query = " UPDATE ATM_DALY SET LVOFC_TIME = %s, LVOFC_JDGMNT = %s, UPT_DTIME = %s, UPT_ID = %s WHERE EMPL_NO = %s AND WORK_DATE = %s"
+                    cursor.execute(sql_query, [lvofc_time, lvofc_jdgmnt, uptdtime, uptid, empl_no, works])
+
+                return Response({"message":"Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+                return Response({"error":str(e)}, status=status.HTTP_400_BAD_REQUEST)
