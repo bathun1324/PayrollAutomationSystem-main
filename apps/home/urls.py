@@ -9,13 +9,14 @@ from apps.home.api.attendance import *
 from apps.home.api.commutemanage import *
 from apps.home.api.employeelist import *
 from apps.home.api.beacon import *
+from apps.home.api.payroll import *
 from apps.home.api.corporation import *
 
 urlpatterns = [
     # JWT Token
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
+
     # management
     path('get_departments/', DepartmentAPIView.as_view()),
     path('post_departments/', DepartmentAPIPost.as_view()),
@@ -52,12 +53,16 @@ urlpatterns = [
     path('search_employeelist/', EmployeelistAPISearch.as_view()),
     path('get_retireemployeelist/', RetireemployeelistAPIView.as_view()),
     path('search_retireemployeelist/', RetireemployeelistAPISearch.as_view()),
-    
+
+    # payroll 급여관리
+    path('get_payroll/', PayrollAPIView.as_view()),
+
+
     # beacon 비콘
     path('get_beaconcheck/', BeaconAPIView.as_view()),
     path('post_beaconcheck/', BeaconAPIPost.as_view()),
     path('post_beaconcheck_ex/', BeaconAPIPostEx.as_view()),
-    
+
     # corporation 회사정보
     path('get_corporationinfo/', CorporationInfoAPIView.as_view()),
 ]

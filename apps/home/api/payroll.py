@@ -47,7 +47,6 @@ class PayrollAPIView(APIView):
                 "empl_encpnd": row[20],  # 입사일자
                 "empl_salary_form": row[19],  # 급여종류
             }
-            print(serialized_empl)
             payroll_employees.append(serialized_empl)
 
         return JsonResponse(payroll_employees, safe=False)
