@@ -46,14 +46,20 @@ class AttendanceAPIView(APIView):
                 "empl_work_sch": row[32], # 스케쥴
                 "empl_atend_time": row[33], # 출근일자
                 "empl_lvofc_time": row[34], # 퇴근일자
+                "empl_gnot": row[35], # 외출시간
+                "empl_rtn": row[36], # 복귀시간
                 "empl_atend_jdgmnt": row[37], # 출근판정
                 "empl_lvofc_jdgmnt": row[38], # 퇴근판정
+                "empl_laten_time": row[39], # 지각시간
+                "empl_gnot_time": row[40], # 외출시간
+                "empl_elpd_atend": row[41], # 조기추근
                 "empl_extn_work": row[42], # 연장근무
+                "empl_night_work": row[43], # 야간근무
+                "empl_hday_work": row[44], # 휴일근무
                 "empl_realwork_tume": row[45], # 실제근무
                 "empl_remark": row[46], # 비고
                 "empl_dept_nm": row[53], # 부서이름
             }
-            print(serialized_empl)
             serialized_employees.append(serialized_empl)
         
         return JsonResponse(serialized_employees, safe=False)
