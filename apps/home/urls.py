@@ -9,6 +9,7 @@ from apps.home.api.attendance import *
 from apps.home.api.commutemanage import *
 from apps.home.api.employeelist import *
 from apps.home.api.beacon import *
+from apps.home.api.corporation import *
 
 urlpatterns = [
     # JWT Token
@@ -56,4 +57,7 @@ urlpatterns = [
     path('get_beaconcheck/', BeaconAPIView.as_view()),
     path('post_beaconcheck/', BeaconAPIPost.as_view()),
     path('post_beaconcheck_ex/', BeaconAPIPostEx.as_view()),
+    
+    # corporation 회사정보
+    path('get_corporationinfo/', CorporationInfoAPIView.as_view()),
 ]
