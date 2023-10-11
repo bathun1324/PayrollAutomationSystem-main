@@ -50,6 +50,7 @@ class EmployeelistAPIView(APIView):
                 "empl_gender": row[5],  # 성별
                 "empl_telno": row[11],  # 전화번호
                 "empl_ssid_addr": row[12],  # 실거주지
+                "empl_email": row[14],  # 이메일
                 "empl_rspofc": row[17],  # 직책
                 "empl_emplym_form": row[18],  # 고용형태
                 "empl_salary_form": row[19],  # 급여형태
@@ -115,6 +116,7 @@ class EmployeelistAPISearch(APIView):
                 "empl_gender": row[5],  # 성별
                 "empl_telno": row[11],  # 전화번호
                 "empl_ssid_addr": row[12],  # 실거주지
+                "empl_email": row[14],  # 이메일
                 "empl_rspofc": row[17],  # 직책
                 "empl_emplym_form": row[18],  # 고용형태
                 "empl_salary_form": row[19],  # 급여형태
