@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
 from django.http import JsonResponse
+from django.http import HttpResponse
 
 from apps.home.models import *
 from apps.home.serializers import *
@@ -45,12 +46,13 @@ class LoginAPI(APIView):
                 refresh.refresh_token = self.generate_refresh_token(user)
 
                 # 로그인 로그 저장
+                client_ip = get_client_ip(request)
                 sql_query = """
                 insert into CMM_CONNLOG values (%s, sysdate(), %s);
                 """
                 cursor = connection.cursor()
                 cursor.execute(
-                    sql_query, [username, socket.gethostbyname(socket.gethostname())])
+                    sql_query, [username, client_ip])
 
                 return JsonResponse({
                     'message': '로그인 성공',
@@ -91,3 +93,8 @@ class LoginAPI(APIView):
             return False
 
         return False
+
+
+def get_client_ip(request):
+    client_ip = request.META.get('REMOTE_ADDR')
+    return client_ip
