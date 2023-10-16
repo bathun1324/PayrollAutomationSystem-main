@@ -28,7 +28,7 @@ class PayrollAPIView(APIView):
         FROM HRM_EMPL empl
         JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
-        WHERE empl.HFFC_STATE = "재직"
+        WHERE empl.HFFC_STATE = "O"
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
@@ -42,10 +42,10 @@ class PayrollAPIView(APIView):
             serialized_empl = {
                 "dept_nm": row[30],  # 부서명
                 "empl_no": row[2],  # 사원번호
-                "empl_nm": row[3],  # 사원명
-                "empl_rspofc": row[17],  # 직책
-                "empl_encpnd": row[20],  # 입사일자
-                "empl_salary_form": row[19],  # 급여종류
+                "empl_nm": row[4],  # 사원명
+                "empl_rspofc": row[5],  # 직책
+                "empl_encpnd": row[28],  # 입사일자
+                "empl_salary_form": row[20],  # 급여종류
             }
             payroll_employees.append(serialized_empl)
 
