@@ -424,29 +424,30 @@ class EmployeeAPIDetailTable(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "dept_no": row[1],
-                "empl_no": row[2],
-                "empl_nm": row[3],
-                "ssid": row[4],
-                "gender": row[5],
-                "brthdy": row[6],
-                "lunisolar": row[7],
-                "mrig_yn": row[8],
-                "mrig_anvsry": row[9],
-                "tel_no": row[10],
-                "mobile_no": row[11],
-                "ssid_addr": row[12],
-                "rlrsdnc_addr": row[13],
-                "email": row[14],
-                "prsl_email": row[15],
-                "exctv_yn": row[16],
-                "rspofc": row[17],
-                "emplym_form": row[18],
-                "salary_form": row[19],
-                "encpnd": row[20],
-                "hffc_state": row[21],
-                "retire_date": row[22],
-                "frgnr_yn": row[23],
+                "dept_no": row[1],  # 부서번호
+                "empl_no": row[2],  # 사원번호
+                "empl_nm": row[4],  # 사원명
+                "ssid": row[21],    # 주민등록번호
+                "gender": row[5],   # 성별
+                "brthdy": row[9],   # 생년월일
+                "lunisolar": row[17],  # 양/음력(양/음)
+                "mrig_yn": row[7],  # 결혼여부
+                "mrig_anvsry": row[24],  # 결혼기념일
+                "tel_no": row[15],  # 전화번호
+                "mobile_no": row[16],   # 휴대폰번호
+                "ssid_addr": row[26],   # 주민등록번호 주소
+                "rlrsdnc_addr": row[27],  # 실거주 주소
+                "email": row[22],   # 이메일
+                "prsl_email": row[8],  # 개인이메일
+                "exctv_yn": row[11],    # 임원여부
+                "rspofc": row[3],  # 직위
+                "emplym_form": row[23],  # 고용형태
+                "salary_form": row[20],  # 급여형태
+                "encpnd": row[28],  # 입사일자
+                "hffc_state": row[10],  # 재직상태
+                "retire_date": row[18],  # 퇴사일자
+                "frgnr_yn": row[14],    # 외국인여부(O,X)
+                "dtrmcexp_icny": row[51],    # 출국만기보험사
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -467,14 +468,14 @@ class EmployeeAPIDetailAttend(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "epml_no": row[0],
-                "corp_no": row[1],
-                "dept_no": row[2],
-                "base_attendtime": row[3],
-                "base_lvofctime": row[4],
-                "mdwk_workday": row[5],
-                "whday": row[6],
-                "crtlwh": row[7],
+                "epml_no": row[0],  # 사원번호
+                "corp_no": row[1],  # 회사번호
+                "dept_no": row[2],  # 부서번호
+                "base_attendtime": row[3],  # 기본 출근시간
+                "base_lvofctime": row[4],   # 기본 퇴근시간
+                "mdwk_workday": row[5],     # 주중 근무일
+                "whday": row[6],    # 주휴일
+                "crtlwh": row[7],   # 소정근로시간
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -495,18 +496,19 @@ class EmployeeAPIDetailSalary(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "epml_no": row[0],
-                "corp_no": row[1],
-                "dept_no": row[2],
-                "base_salary": row[3],
-                "trn_bank": row[4],
-                "acc_no": row[5],
-                "npn_pay_yn": row[6],
-                "npn_mrmrtn": row[7],
-                "hlthins_pay_yn": row[8],
-                "hlthins_mrmrtn": row[9],
-                "empins_pay_yn": row[10],
-                "empins_mrmrtn": row[11],
+                "epml_no": row[0],  # 사원번호
+                "corp_no": row[1],  # 회사번호
+                "dept_no": row[2],  # 부서번호
+                "base_salary": row[3],  # 기본급여
+                "trn_bank": row[4],  # 이체은행
+                "acc_no": row[5],   # 계좌번호
+                "npn_pay_yn": row[6],   # 국민연금납부여부(O/X)
+                "npn_mrmrtn": row[7],   # 국민연금월보수액
+                "hlthins_pay_yn": row[8],   # 건강보험납부여부(O/X)
+                "hlthins_mrmrtn": row[9],   # 건강보험월보수액
+                "empins_pay_yn": row[10],   # 고용보험납부여부(O/X)
+                "rperins_pay_yn": row[11],  # 요양보험납부여부(O/X)
+                "wthtx_taxrt": row[12],  # 원천징수세율
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -527,13 +529,13 @@ class EmployeeAPIDetailFrgnr(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "epml_no": row[0],
-                "corp_no": row[1],
-                "dept_no": row[2],
-                "dtrmcexp_date": row[3],
-                "dtrmcexp_icny": row[4],
-                "dtrmcexp_insrnc_amt": row[5],
-                "remark": row[6],
+                "epml_no": row[0],  # 사원번호
+                "corp_no": row[1],  # 회사번호
+                "dept_no": row[2],  # 부서번호
+                "dtrmcexp_date": row[3],    # 출국만기일
+                "dtrmcexp_icny": row[4],    # 출국만기보험사(O/X)
+                "dtrmcexp_insrnc_amt": row[5],  # 출국만기보험금액
+                "remark": row[6],   # 비고
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
