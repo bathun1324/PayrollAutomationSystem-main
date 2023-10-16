@@ -123,22 +123,34 @@ class EmployeelistAPISearch(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_nm": row[3],  # 사원명
-                "empl_ssid": row[4],  # 주민번호
+                "empl_rspofc": row[3], # 직위
+                "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
-                "empl_telno": row[11],  # 전화번호
-                "empl_ssid_addr": row[12],  # 실거주지
-                "empl_email": row[14],  # 이메일
-                "empl_rspofc": row[17],  # 직책
-                "empl_emplym_form": row[18],  # 고용형태
-                "empl_salary_form": row[19],  # 급여형태
-                "empl_encpnd": row[20],  # 입사일
-                "empl_hffc_state": row[21],  # 재직상태
-                "empl_retire_date": row[22],  # 퇴사일자
-                "empl_frgnr_yn": row[23],  # 외국인여부
-                "empl_dept_nm": row[30],  # 부서이름
-                "empl_bank": row[40],  # 은행
-                "empl_acc": row[41],  # 계좌번호
+                "empl_reg_dtime": row[6],
+                "empl_mrig_yn": row[7],  # 결혼여부
+                "empl_prsl_email": row[8],  # 개인이메일
+                "empl_brthdy": row[9],  # 생년월일
+                "empl_hffc_state": row[10],  # 재직상태
+                "empl_exctv_yn": row[11],  # 임원여부
+                "empl_photoid": row[12],  # 사진
+                "empl_reg_id": row[13],  # 등록자
+                "empl_frgnr_yn": row[14],  # 외국인여부
+                "empl_telno": row[15],  # 전화번호
+                "empl_mobile_no": row[16],  # 휴대폰번호
+                "empl_lunisolar": row[17],  # 양음력
+                "empl_retire_date": row[18],  # 퇴사일자
+                "empl_upt_id": row[19],  # 수정자
+                "empl_salary_form": row[20],  # 급여형태
+                "empl_ssid": row[21],  # 주민번호
+                "empl_email": row[22],  # 이메일
+                "empl_emplyn_form": row[23],  # 고용형태
+                "empl_mrig_anvsry": row[24],  # 결혼기념일
+                "empl_ssid_addr": row[26],  # 주민등록번황 거주지
+                "empl_rlsdnc_addr": row[27],  # 실거주지
+                "empl_encpnd": row[28],  # 입사일
+                "empl_dept_nm": row[31],  # 부서이름
+                "empl_bank": row[41],  # 은행
+                "empl_acc": row[42],  # 계좌번호
             }
             serialized_employeelist.append(serialized_empl)
 
@@ -153,7 +165,7 @@ class RetireemployeelistAPIView(APIView):
         JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
-        ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "퇴사"
+        ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "X"
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
@@ -168,23 +180,35 @@ class RetireemployeelistAPIView(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_nm": row[3],  # 사원명
-                "empl_ssid": row[4],  # 주민번호
+                "empl_rspofc": row[3], # 직위
+                "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
-                "empl_telno": row[11],  # 전화번호
-                "empl_ssid_addr": row[12],  # 실거주지
-                "empl_email": row[14],  # 이메일
-                "empl_rspofc": row[17],  # 직책
-                "empl_emplym_form": row[18],  # 고용형태
-                "empl_salary_form": row[19],  # 급여형태
-                "empl_encpnd": row[20],  # 입사일
-                "empl_hffc_state": row[21],  # 재직상태
-                "empl_retire_date": row[22],  # 퇴사일자
-                "empl_frgnr_yn": row[23],  # 외국인여부
-                "empl_dept_nm": row[30],  # 부서이름
-                "empl_bank": row[40],  # 은행
-                "empl_acc": row[41],  # 계좌번호
-                "empl_period": row[50],  # 재직기간
+                "empl_reg_dtime": row[6],
+                "empl_mrig_yn": row[7],  # 결혼여부
+                "empl_prsl_email": row[8],  # 개인이메일
+                "empl_brthdy": row[9],  # 생년월일
+                "empl_hffc_state": row[10],  # 재직상태
+                "empl_exctv_yn": row[11],  # 임원여부
+                "empl_photoid": row[12],  # 사진
+                "empl_reg_id": row[13],  # 등록자
+                "empl_frgnr_yn": row[14],  # 외국인여부
+                "empl_telno": row[15],  # 전화번호
+                "empl_mobile_no": row[16],  # 휴대폰번호
+                "empl_lunisolar": row[17],  # 양음력
+                "empl_retire_date": row[18],  # 퇴사일자
+                "empl_upt_id": row[19],  # 수정자
+                "empl_salary_form": row[20],  # 급여형태
+                "empl_ssid": row[21],  # 주민번호
+                "empl_email": row[22],  # 이메일
+                "empl_emplyn_form": row[23],  # 고용형태
+                "empl_mrig_anvsry": row[24],  # 결혼기념일
+                "empl_ssid_addr": row[26],  # 주민등록번황 거주지
+                "empl_rlsdnc_addr": row[27],  # 실거주지
+                "empl_encpnd": row[28],  # 입사일
+                "empl_dept_nm": row[31],  # 부서이름
+                "empl_bank": row[41],  # 은행
+                "empl_acc": row[42],  # 계좌번호
+                "empl_period": row[52],  # 재직기간
             }
             print(serialized_empl)
             serialized_retireemployeelist.append(serialized_empl)
@@ -207,7 +231,7 @@ class RetireemployeelistAPISearch(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
-        WHERE empl.HFFC_STATE = "퇴사"
+        WHERE empl.HFFC_STATE = "X"
         """
         values = []
 
@@ -237,23 +261,35 @@ class RetireemployeelistAPISearch(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_nm": row[3],  # 사원명
-                "empl_ssid": row[4],  # 주민번호
+                "empl_rspofc": row[3], # 직위
+                "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
-                "empl_telno": row[11],  # 전화번호
-                "empl_ssid_addr": row[12],  # 실거주지
-                "empl_email": row[13],  # 이메일
-                "empl_rspofc": row[17],  # 직책
-                "empl_emplym_form": row[18],  # 고용형태
-                "empl_salary_form": row[19],  # 급여형태
-                "empl_encpnd": row[20],  # 입사일
-                "empl_hffc_state": row[21],  # 재직상태
-                "empl_retire_date": row[22],  # 퇴사일자
-                "empl_frgnr_yn": row[23],  # 외국인여부
-                "empl_dept_nm": row[30],  # 부서이름
-                "empl_bank": row[40],  # 은행
-                "empl_acc": row[41],  # 계좌번호
-                "empl_period": row[50],  # 재직기간
+                "empl_reg_dtime": row[6],
+                "empl_mrig_yn": row[7],  # 결혼여부
+                "empl_prsl_email": row[8],  # 개인이메일
+                "empl_brthdy": row[9],  # 생년월일
+                "empl_hffc_state": row[10],  # 재직상태
+                "empl_exctv_yn": row[11],  # 임원여부
+                "empl_photoid": row[12],  # 사진
+                "empl_reg_id": row[13],  # 등록자
+                "empl_frgnr_yn": row[14],  # 외국인여부
+                "empl_telno": row[15],  # 전화번호
+                "empl_mobile_no": row[16],  # 휴대폰번호
+                "empl_lunisolar": row[17],  # 양음력
+                "empl_retire_date": row[18],  # 퇴사일자
+                "empl_upt_id": row[19],  # 수정자
+                "empl_salary_form": row[20],  # 급여형태
+                "empl_ssid": row[21],  # 주민번호
+                "empl_email": row[22],  # 이메일
+                "empl_emplyn_form": row[23],  # 고용형태
+                "empl_mrig_anvsry": row[24],  # 결혼기념일
+                "empl_ssid_addr": row[26],  # 주민등록번황 거주지
+                "empl_rlsdnc_addr": row[27],  # 실거주지
+                "empl_encpnd": row[28],  # 입사일
+                "empl_dept_nm": row[31],  # 부서이름
+                "empl_bank": row[41],  # 은행
+                "empl_acc": row[42],  # 계좌번호
+                "empl_period": row[52],  # 재직기간
             }
             serialized_employeelist.append(serialized_empl)
 
