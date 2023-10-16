@@ -60,7 +60,7 @@ class LoginAPI(APIView):
                     'refresh_token': str(refresh),
                     'user_info': {
                         'login_id': user.login_id,
-                        'perm': user.perm,
+                        'perm': user.perm_id,
                         'empl_no': user.empl_no,
                         'corp_no': user.corp_no,
                         'dept_no': user.dept_no,
