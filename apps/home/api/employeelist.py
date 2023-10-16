@@ -26,7 +26,7 @@ class EmployeelistAPIView(APIView):
         sql_query = """
         SELECT *
         FROM HRM_EMPL empl
-        JOIN HRM_DEPT dept
+        JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
@@ -79,7 +79,7 @@ class EmployeelistAPISearch(APIView):
         sql_query = """
         SELECT *
         FROM HRM_EMPL empl
-        JOIN HRM_DEPT dept
+        JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
@@ -138,7 +138,7 @@ class RetireemployeelistAPIView(APIView):
         sql_query = """
         SELECT *, ABS(TIMESTAMPDIFF(DAY, empl.ENCPND, empl.RETIRE_DATE))
         FROM HRM_EMPL empl
-        JOIN HRM_DEPT dept
+        JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "퇴사"
@@ -191,7 +191,7 @@ class RetireemployeelistAPISearch(APIView):
         sql_query = """
         SELECT *, ABS(TIMESTAMPDIFF(DAY, empl.ENCPND, empl.RETIRE_DATE))
         FROM HRM_EMPL empl
-        JOIN HRM_DEPT dept
+        JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO

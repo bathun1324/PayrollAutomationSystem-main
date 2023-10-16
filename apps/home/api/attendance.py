@@ -24,7 +24,7 @@ class AttendanceAPIView(APIView):
     def get(self, request):
         sql_query = """
         SELECT *
-        FROM HRM_EMPL empl, ATM_DALY daly, HRM_DEPT dept
+        FROM HRM_EMPL empl, ATM_DALY daly, BIM_DEPT dept
         WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO ORDER BY ATEND_TIME DESC
         """
 
@@ -78,7 +78,7 @@ class AttendanceAPISearch(APIView):
 
         sql_query = """
             SELECT *
-            FROM HRM_EMPL empl, ATM_DALY daly, HRM_DEPT dept
+            FROM HRM_EMPL empl, ATM_DALY daly, BIM_DEPT dept
             WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
             """
             

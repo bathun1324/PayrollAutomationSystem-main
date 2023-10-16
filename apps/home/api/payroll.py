@@ -26,7 +26,7 @@ class PayrollAPIView(APIView):
         sql_query = """
         SELECT *
         FROM HRM_EMPL empl
-        JOIN HRM_DEPT dept
+        JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         WHERE empl.HFFC_STATE = "재직"
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)

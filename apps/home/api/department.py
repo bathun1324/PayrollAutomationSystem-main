@@ -24,10 +24,8 @@ class DepartmentAPIView(APIView):
         
         for dept in departments:
             state = "사용" if dept.state == "1" else "미사용"
-            corp_instance = ComCorp.objects.get(pk=dept.corp_no.pk)
-            corp_serializer = ComCorpSerializer(corp_instance)
             serialized_dept = {
-                "no": corp_serializer.data,
+                "no": dept.corp_no,
                 "id": dept.dept_no,
                 "name": dept.dept_nm,
                 "state": state,
@@ -83,12 +81,12 @@ class DepartmentAPIPost(APIView):
             try:
                 # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT MAX(DEPT_NO) FROM HRM_DEPT WHERE CORP_NO = %s", [corp_no])
+                    cursor.execute("SELECT MAX(DEPT_NO) FROM BIM_DEPT WHERE CORP_NO = %s", [corp_no])
                     max_dept_no = cursor.fetchone()[0]
                     new_dept_no = (max_dept_no or 0) + 1
                     
                     sql_query = """
-                    INSERT INTO HRM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
+                    INSERT INTO BIM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     """
                     cursor.execute(sql_query, [corp_no, new_dept_no, dept_name, dept_status, reg_date, reg_id, mod_date, mod_id])
@@ -116,7 +114,7 @@ class DepartmentAPIDelete(APIView):
                     with connection.cursor() as cursor:
                         
                         sql_query = """
-                        UPDATE HRM_DEPT SET state = '2' WHERE dept_no = %s AND corp_no = %s
+                        UPDATE BIM_DEPT SET state = '2' WHERE dept_no = %s AND corp_no = %s
                         """
                         cursor.execute(sql_query, [dept_no, corp_no])
 
