@@ -41,37 +41,37 @@ class EmployeeAPIView(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "no": row['CORP_NO'],  # 회사번호
-                "id": row['DEPT_NO'],  # 부서번호
-                "empl_no": row['EMPL_NO'],  # 사원번호
-                "empl_ofcps": row['OFCPS'], # 직위
-                "empl_nm": row['EMPL_NM'],  # 사원명
-                "empl_gender": row['GENDER'],  # 성별
-                "empl_reg_dtime": row['REG_DTIME'],
-                "empl_mrig_yn": row['MRIG_YN'],  # 결혼여부
-                "empl_prsl_email": row['PRSL_EMAIL'],  # 개인이메일
-                "empl_brthdy": row['BRTHDY'],  # 생년월일
-                "empl_hffcstate": row['HFFC_STATE'],  # 재직상태
-                "empl_exctv_yn": row['EXCTV_YN'],  # 임원여부
-                "empl_photoid": row['PHOTO_ID'],  # 사진
-                "empl_reg_id": row['REG_ID'],  # 등록자
-                "empl_frgnr_yn": row['FRGNR_YN'],  # 외국인여부
-                "empl_tel_no": row['TEL_NO'],  # 전화번호
-                "empl_mobile_no": row['MOBILE_NO'],  # 휴대폰번호
-                "empl_lunisolar": row['LUNISOLAR'],  # 양음력
-                "empl_retire_date": row['RETIRE_DATE'],  # 퇴사일자
-                "empl_upt_id": row['UPT_ID'],  # 수정자
-                "empl_salary_form": row['SALARY_FORM'],  # 급여형태
-                "empl_ssid": row['SSID'],  # 주민번호
-                "empl_email": row['EMAIL'],  # 이메일
-                "empl_emplyn_form": row['EMPLYN_FORM'],  # 고용형태
-                "empl_mrig_anvsry": row['MRIG_ANVSRY'],  # 결혼기념일
-                "empl_ssid_addr": row['SSID_ADDR'],  # 주민등록번황 거주지
-                "empl_rlsdnc_addr": row['RLRSDNC_ADDR'],  # 실거주지
-                "empl_encpnd": row['ENCPND'],  # 입사일
-                "empl_dept_nm": row['DEPT_NM'],  # 부서이름
-                "empl_bank": row['TRN_BANK'],  # 은행
-                "empl_acc": row['ACC_NO'],  # 계좌번호
+                "no": row[0],  # 회사번호
+                "id": row[1],  # 부서번호
+                "empl_no": row[2],  # 사원번호
+                "empl_rspofc": row[3],  # 직위
+                "empl_nm": row[4],  # 사원명
+                "empl_gender": row[5],  # 성별
+                "empl_reg_dtime": row[6],
+                "empl_mrig_yn": row[7],  # 결혼여부
+                "empl_prsl_email": row[8],  # 개인이메일
+                "empl_brthdy": row[9],  # 생년월일
+                "empl_hffc_state": row[10],  # 재직상태
+                "empl_exctv_yn": row[11],  # 임원여부
+                "empl_photoid": row[12],  # 사진
+                "empl_reg_id": row[13],  # 등록자
+                "empl_frgnr_yn": row[14],  # 외국인여부
+                "empl_telno": row[15],  # 전화번호
+                "empl_mobile_no": row[16],  # 휴대폰번호
+                "empl_lunisolar": row[17],  # 양음력
+                "empl_retire_date": row[18],  # 퇴사일자
+                "empl_upt_id": row[19],  # 수정자
+                "empl_salary_form": row[20],  # 급여형태
+                "empl_ssid": row[21],  # 주민번호
+                "empl_email": row[22],  # 이메일
+                "empl_emplyn_form": row[23],  # 고용형태
+                "empl_mrig_anvsry": row[24],  # 결혼기념일
+                "empl_ssid_addr": row[26],  # 주민등록번황 거주지
+                "empl_rlsdnc_addr": row[27],  # 실거주지
+                "empl_encpnd": row[28],  # 입사일
+                "empl_dept_nm": row[31],  # 부서이름
+                "empl_bank": row[41],  # 은행
+                "empl_acc": row[42],  # 계좌번호
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -131,7 +131,7 @@ class EmployeeAPIViewSearch(APIView):
                 "no": row['CORP_NO'],  # 회사번호
                 "id": row['DEPT_NO'],  # 부서번호
                 "empl_no": row['EMPL_NO'],  # 사원번호
-                "empl_ofcps": row['OFCPS'], # 직위
+                "empl_ofcps": row['OFCPS'],  # 직위
                 "empl_nm": row['EMPL_NM'],  # 사원명
                 "empl_gender": row['GENDER'],  # 성별
                 "empl_reg_dtime": row['REG_DTIME'],
