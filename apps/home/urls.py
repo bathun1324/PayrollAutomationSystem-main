@@ -43,6 +43,7 @@ urlpatterns = [
 
     # attendance
     path('get_attendace/', AttendanceAPIView.as_view()),
+    path('search_attendace/', AttendanceAPISearch.as_view()),
 
     # commutemanage
     path('get_commutemanage/', CommuteManageAPIView.as_view()),
@@ -65,4 +66,5 @@ urlpatterns = [
 
     # corporation 회사정보
     path('get_corporationinfo/', CorporationInfoAPIView.as_view()),
+    path('search_corporationinfo/', CorporationInfoAPISearch.as_view()),
 ]

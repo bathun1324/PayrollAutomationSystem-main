@@ -64,8 +64,15 @@ class CommuteManageAPIView(APIView):
 
 class CommuteManageAPISearch(APIView):
     def get(self, request):
-        empl_name = request.GET.get('employee_name', None)
-        empl_no = request.GET.get('employee_no', None)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
+        department = request.GET.get('department', None)
+        attendyn = request.GET.get('attendyn', None)
+        
+        print(start_date)
+        print(end_date)
+        print(department)
+        print(attendyn)
 
         values = []
 
@@ -74,21 +81,24 @@ class CommuteManageAPISearch(APIView):
             FROM HRM_EMPL empl, ATM_DALY daly, HRM_DEPT dept
             WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
             """
-        if(empl_no and empl_name and empl_no != 'undefined' and empl_name != 'undefined'):
-            sql_query += """
-            AND empl.EMPL_NM = %s AND empl.EMPL_NO = %s
-            """
-            values.append(empl_name)
-            values.append(empl_no)
-        elif(empl_no and empl_no != 'undefined'):
-            sql_query += """
-            AND empl.EMPL_NO = %s """
-            values.append(empl_no)
-        else:
-            print("empl_name->", empl_name)
-            sql_query += """
-            AND empl.EMPL_NM = %s """
-            values.append(empl_name)
+            
+        if start_date and start_date != 'undefined' and end_date and end_date != 'undefined':
+            sql_query += " AND ATEND_TIME > %s AND ATEND_TIME < %s "
+            values.append(start_date)
+            values.append(end_date)
+            
+        if department and department != 'undefined':
+            sql_query += " AND dept.DEPT_NM = %s "
+            values.append(department)
+            
+        if attendyn and attendyn != 'undefined':
+            if attendyn == '출근':
+                sql_query += " AND daly.ATEND_JDGMNT = %s "
+                values.append(attendyn)
+            elif attendyn == '퇴근':
+                sql_query += " AND daly.LVOFC_JDGMNT = %s "
+                values.append(attendyn)
+            
         # SQL 쿼리 실행
         sql_query += """ ORDER BY ATEND_TIME DESC """
         cursor = connection.cursor()
@@ -98,25 +108,22 @@ class CommuteManageAPISearch(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "no": row[0],  # 회사번호
-                "id": row[1],  # 부서번호
-                "empl_no": row[2],  # 사원번호
-                "empl_nm": row[3],  # 사원명
-                "empl_ssid": row[4],  # 주민번호
-                "empl_gender": row[5],  # 성별
-                "empl_telno": row[11],  # 전화번호
-                "empl_ssid_addr": row[12],  # 주민번호주소
-                "empl_tltsdnc_addr": row[13],  # 실거주지주소
-                "empl_rspofc": row[17],  # 직책
-                "empl_emplym_form": row[18],  # 고용형태
-                "empl_salary_form": row[19],  # 급여형태
-                "empl_encpnd": row[20],  # 입사일
-                "empl_hffc_state": row[21],  # 재직상태
-                "empl_retire_date": row[22],  # 퇴사일자
-                "empl_frgnr_yn": row[23],  # 외국인여부
-                "empl_base_atendtime": row[31],  # 기본출근시간
-                "empl_base_lvofctime": row[32],  # 기본퇴근시간
-                "empl_dept_nm": row[40],  # 부서명
+                "no": row[0], # 회사번호
+                "id": row[1], # 부서번호
+                "empl_no": row[2], # 사원번호
+                "empl_nm": row[3], # 사원명
+                "empl_gender": row[5], # 성별
+                "empl_frgnr_yn": row[23], # 외국인여부
+                "empl_work_date": row[31], # 근무일자
+                "empl_work_sch": row[32], # 스케쥴
+                "empl_atend_time": row[33], # 출근일자
+                "empl_lvofc_time": row[34], # 퇴근일자
+                "empl_atend_jdgmnt": row[37], # 출근판정
+                "empl_lvofc_jdgmnt": row[38], # 퇴근판정
+                "empl_extn_work": row[42], # 연장근무
+                "empl_realwork_tume": row[45], # 실제근무
+                "empl_remark": row[46], # 비고
+                "empl_dept_nm": row[53], # 부서이름
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)

@@ -19,7 +19,7 @@ from datetime import datetime
 # @login_required(login_url="/login/")
 class DepartmentAPIView(APIView):
     def get(self, request):
-        departments = HrmDept.objects.all()
+        departments = BimDept.objects.all()
         serialized_departments = []
         
         for dept in departments:
@@ -44,7 +44,7 @@ class DepartmentAPISearch(APIView):
     def get(self, request):
         dept_id = request.GET.get('department_id', None)
         
-        departments = HrmDept.objects.filter(dept_no = dept_id)
+        departments = BimDept.objects.filter(dept_no = dept_id)
         serialized_departments = []
         
         for dept in departments:
