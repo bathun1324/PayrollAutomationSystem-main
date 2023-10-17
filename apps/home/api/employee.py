@@ -585,7 +585,7 @@ class EmployeeupdateAPIPost(APIView):
         ssid_empl = employee_info.get('ssid')
         gender_empl = employee_info.get('gender')
         brthdy_empl = employee_info.get('brthdy')
-        lunsolar_empl = employee_info.get('lunsolar')
+        lunisolar_empl = employee_info.get('lunisolar')
         mrig_yn_empl = employee_info.get('mrig_yn')
         mrig_anvsry_empl = employee_info.get('mrig_anvsry')
         tel_no_empl = employee_info.get('tel_no')
@@ -602,7 +602,6 @@ class EmployeeupdateAPIPost(APIView):
         hffc_state_empl = employee_info.get('hffc_state')
         retire_date_empl = employee_info.get('retire_date')
         frgnr_yn_empl = employee_info.get('frgnr_yn')
-        reg_dtime_empl = now.strftime('%Y-%m-%d %H:%M:%S')
         reg_id_empl = '관리자'  # 세션처리예정
         upt_dtime_empl = now.strftime('%Y-%m-%d %H:%M:%S')
         upt_id_empl = '운영자'  # 세션처리예정
@@ -631,7 +630,8 @@ class EmployeeupdateAPIPost(APIView):
         hlthins_pay_yn_salary = salary_info.get('hlthins_pay_yn')
         hlthins_mrmrtn_salary = salary_info.get('hlthins_mrmrtn')
         empins_pay_yn_salary = salary_info.get('empins_pay_yn')
-        empins_mrmrtn_salary = salary_info.get('empins_mrmrtn')
+        rperins_pay_yn = salary_info.get('rperins_pay_yn')
+        wthtx_taxrt = salary_info.get('wthtx_taxrt')
         upt_dtime_salary = now.strftime('%Y-%m-%d %H:%M:%S')
         upt_id_salary = '운영자'  # 세션처리예정
 
@@ -656,17 +656,17 @@ class EmployeeupdateAPIPost(APIView):
                     cursor.execute("SET FOREIGN_KEY_CHECKS=0")
 
                     sql_query = """
-                                    UPDATE HRM_EMPL 
-                                    SET CORP_NO = %s, DEPT_NO = %s, EMPL_NM = %s, SSID = %s, GENDER = %s, BRTHDY = %s, LUNISOLAR = %s, MRIG_YN = %s, MRIG_ANVSRY = %s,
-                                        TEL_NO = %s, MOBILE_NO = %s, SSID_ADDR = %s, RLRSDNC_ADDR = %s, EMAIL = %s, PRSL_EMAIL = %s, EXCTV_YN = %s, RSPOFC = %s,
-                                        EMPLYM_FORM = %s, SALARY_FORM = %s, ENCPND = %s, HFFC_STATE = %s, RETIRE_DATE = %s, FRGNR_YN = %s, REG_DTIME = %s,
-                                        REG_ID = %s, UPT_DTIME = %s, UPT_ID = %s 
-                                    WHERE EMPL_NO = %s
+                                        UPDATE HRM_EMPL 
+                                        SET CORP_NO = %s, DEPT_NO = %s, EMPL_NM = %s, SSID = %s, GENDER = %s, BRTHDY = %s, LSCLD = %s, MRIG_YN = %s, MRIG_ANVSRY = %s,
+                                            TEL_NO = %s, MOBILE_NO = %s, SSID_ADDR = %s, RLRSDNC_ADDR = %s, EMAIL = %s, PRSL_EMAIL = %s, EXCTV_YN = %s, OFCPS = %s,
+                                            EMPLYM_FORM = %s, SALARY_FORM = %s, ENCPND = %s, HFFC_STATE = %s, RETIRE_DATE = %s, FRGNR_YN = %s,
+                                            REG_ID = %s, UPT_DTIME = %s, UPT_ID = %s 
+                                        WHERE EMPL_NO = %s
                                     """
                     cursor.execute(sql_query, [
-                        corp_no_empl, dept_no_empl, empl_nm_empl, ssid_empl, gender_empl, brthdy_empl, lunsolar_empl, mrig_yn_empl, mrig_anvsry_empl,
+                        corp_no_empl, dept_no_empl, empl_nm_empl, ssid_empl, gender_empl, brthdy_empl, lunisolar_empl, mrig_yn_empl, mrig_anvsry_empl,
                         tel_no_empl, mobile_no_empl, ssid_addr_empl, rlsdnc_addr_empl, email_empl, prsl_email_empl, exctv_yn_empl, rspofc_empl,
-                        emplym_form_empl, salary_form_empl, encpnd_empl, hffc_state_empl, retire_date_empl, frgnr_yn_empl, reg_dtime_empl,
+                        emplym_form_empl, salary_form_empl, encpnd_empl, hffc_state_empl, retire_date_empl, frgnr_yn_empl,
                         reg_id_empl, upt_dtime_empl, upt_id_empl, empl_no
                     ])
 
@@ -682,15 +682,15 @@ class EmployeeupdateAPIPost(APIView):
                     ])
 
                     sql_query_salary = """
-                                            UPDATE HRM_SALARY
-                                            SET CORP_NO = %s, DEPT_NO = %s, BASE_SALARY = %s, TRN_BANK = %s, ACC_NO = %s, NPN_PAY_YN = %s, NPN_MRMRTN = %s,
-                                                HLTHINS_PAY_YN = %s, HLTHINS_MRMRTN = %s, EMPINS_PAY_YN = %s, EMPINS_MRMRTN = %s, UPT_DTIME = %s, UPT_ID = %s
-                                            WHERE EMPL_NO = %s
+                                        UPDATE HRM_SALARY
+                                        SET CORP_NO = %s, DEPT_NO = %s, BASE_SALARY = %s, TRN_BANK = %s, ACC_NO = %s, NPN_PAY_YN = %s, NPN_MRMRTN = %s,
+                                            HLTHINS_PAY_YN = %s, HLTHINS_MRMRTN = %s, EMPINS_PAY_YN = %s, RPERINS_PAY_YN = %s, WTHTX_TAXRT = %s, UPT_DTIME = %s, UPT_ID = %s
+                                        WHERE EMPL_NO = %s
                                             """
                     cursor.execute(sql_query_salary, [
                         corp_no_salary, dept_no_salary, base_salary_salary, trn_bank_salary, acc_no_salary,
                         npn_pay_yn_salary, npn_mrmrtn_salary, hlthins_pay_yn_salary, hlthins_mrmrtn_salary, empins_pay_yn_salary,
-                        empins_mrmrtn_salary, upt_dtime_salary, upt_id_salary, empl_no
+                        rperins_pay_yn, wthtx_taxrt, upt_dtime_salary, upt_id_salary, empl_no
                     ])
 
                     sql_query_frgnr = """
@@ -701,7 +701,7 @@ class EmployeeupdateAPIPost(APIView):
                                             """
                     cursor.execute(sql_query_frgnr, [
                         corp_no_frgnr, dept_no_frgnr, dtrmcexp_date_frgnr,
-                        dtrmcexp_icny_frgnr, dtrmcexp_insrnc_amt_frgnr, remark_frgnr, upt_dtime_frgnr, upt_id_frgnr, empl_no
+                        dtrmcexp_icny_frgnr, dtrmcexp_insrnc_amt_frgnr, remark_frgnr, upt_dtime_frgnr, upt_id_frgnr, empl_no_frgnr
                     ])
                     # 외래키 제약조건 활성화
                     cursor.execute("SET FOREIGN_KEY_CHECKS=1")
