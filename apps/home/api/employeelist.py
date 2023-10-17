@@ -30,7 +30,7 @@ class EmployeelistAPIView(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
-        WHERE empl.HFFC_STATE IN("O", "X")
+        WHERE empl.HFFC_STATE IN("Y", "N")
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
@@ -165,7 +165,7 @@ class RetireemployeelistAPIView(APIView):
         JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
-        ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "X"
+        ON sal.EMPL_NO = empl.EMPL_NO AND empl.HFFC_STATE = "N"
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
@@ -231,7 +231,7 @@ class RetireemployeelistAPISearch(APIView):
         ON empl.DEPT_NO = dept.DEPT_NO
         JOIN HRM_SALARY sal
         ON sal.EMPL_NO = empl.EMPL_NO
-        WHERE empl.HFFC_STATE = "X"
+        WHERE empl.HFFC_STATE = "N"
         """
         values = []
 

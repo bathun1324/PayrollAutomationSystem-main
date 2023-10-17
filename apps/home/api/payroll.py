@@ -28,7 +28,7 @@ class PayrollAPIView(APIView):
         FROM HRM_EMPL empl
         JOIN BIM_DEPT dept
         ON empl.DEPT_NO = dept.DEPT_NO
-        WHERE empl.HFFC_STATE = "O"
+        WHERE empl.HFFC_STATE = "Y"
         ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
 
