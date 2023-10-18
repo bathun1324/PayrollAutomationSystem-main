@@ -83,7 +83,7 @@ class EmployeelistAPIView(APIView):
 # 직원명부>직원명부조회>검색
 class EmployeelistAPISearch(APIView):
     def get(self, request):
-        # url = `http://127.0.0.1:8000/search_employeelist/?employee_encpnd=${encpnd}&department_no=${deptno}&employee_rspofc=${rspofc}`
+        # url = `http://127.0.01:8000/search_employeelist/?employee_encpnd=${encpnd}&department_no=${deptno}&employee_rspofc=${rspofc}`
         empl_encpnd = request.GET.get('employee_encpnd', None)  # 입사일
         dept_no = request.GET.get('department_no', None)    # 부서번호
         empl_rspofc = request.GET.get('employee_rspofc', None)  # 직급
@@ -219,7 +219,7 @@ class RetireemployeelistAPIView(APIView):
 # 직원명부>직원명부조회>검색
 class RetireemployeelistAPISearch(APIView):
     def get(self, request):
-        # `http://127.0.0.1:8000/search_retireemployeelist/?encpnd=${searchtext.encpnd}&retire_date=${searchtext.retire_date}&dept_id=${searchtext.dept_id}`
+        # `http://127.0.01:8000/search_retireemployeelist/?encpnd=${searchtext.encpnd}&retire_date=${searchtext.retire_date}&dept_id=${searchtext.dept_id}`
         empl_encpnd = request.GET.get('encpnd', None)  # 입사일
         retire_date = request.GET.get('retire_date', None)    # 퇴사일
         dept_no = request.GET.get('dept_id', None)  # 부서번호

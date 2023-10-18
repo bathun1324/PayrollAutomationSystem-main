@@ -64,7 +64,6 @@ class LoginAPI(APIView):
                         'empl_no': user.empl_no,
                         'corp_no': user.corp_no,
                         'dept_no': user.dept_no,
-                        # 추가로 포함시키고 싶은 필드들을 여기에 추가
                     }
                 })
             else:
