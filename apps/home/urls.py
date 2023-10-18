@@ -11,6 +11,7 @@ from apps.home.api.employeelist import *
 from apps.home.api.beacon import *
 from apps.home.api.payroll import *
 from apps.home.api.corporation import *
+from apps.home.api.code import *
 
 urlpatterns = [
     # JWT Token
@@ -39,7 +40,6 @@ urlpatterns = [
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),
     path('get_detailfrgnr/', EmployeeAPIDetailFrgnr.as_view()),
     path('get_detailtablefmly/', EmployeeAPIDetailTableFmly.as_view()),
-
 
     # attendance
     path('get_attendace/', AttendanceAPIView.as_view()),
@@ -70,4 +70,8 @@ urlpatterns = [
     path('post_corporation/', CorporationAPIPost.as_view()),
     path('get_info/', CorporationGetInfo.as_view()),
     path('get_ofcps/', CorporationGetOfcps.as_view()),
+
+
+    # cmm_code 공통코드
+    path('get_codeEmploymentType', CodeEmploymentTypeAPIView.as_view()),
 ]
