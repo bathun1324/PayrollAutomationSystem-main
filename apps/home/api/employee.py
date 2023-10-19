@@ -106,32 +106,8 @@ class EmployeeAPIViewSearch(APIView):
         empl_hffc_state = request.GET.get('employmentStatus', None)
 
         sql_query = """
-        SELECT empl.*, dept.DEPT_NM, ofcps.OFCPS_NM,
-        CASE 
-            WHEN empl.LSCLD = 1 THEN '양력'
-            WHEN empl.LSCLD = 2 THEN '음력'
-            ELSE '다시입력'
-        END AS LSCLD_NM,
-        CASE 
-            WHEN empl.HFFC_STATE = 1 THEN '재직'
-            WHEN empl.HFFC_STATE = 2 THEN '퇴사'
-            ELSE '다시입력'
-        END AS HFFC_STATE_NM,
-        code.CD_VAL SALARY,
-        sel.CD_VAL EMPLYM
-        FROM HRM_EMPL empl
-        JOIN BIM_OFCPS ofcps
-        on empl.CORP_NO = ofcps.CORP_NO AND empl.OFCPS = ofcps.OFCPS
-        JOIN BIM_DEPT dept
-        on empl.CORP_NO = dept.CORP_NO AND empl.DEPT_NO = dept.DEPT_NO
-        JOIN CMM_CODE code
-        on code.LCODE = '0008' AND code.SCODE = empl.SALARY_FORM
-        JOIN (
-        SELECT cc.CD_VAL, he.EMPL_NO AS EMPL_NO
-        FROM HRM_EMPL he, CMM_CODE cc
-        WHERE cc.LCODE = '0010' AND cc.SCODE = he.EMPLYM_FORM
-        ) sel
-        ON sel.EMPL_NO = empl.EMPL_NO
+        SELECT *
+        FROM HRM_EMPL
         WHERE 1=1
         """
 
@@ -169,24 +145,24 @@ class EmployeeAPIViewSearch(APIView):
                 "dept_no": row[1],  # 부서번호
                 "dept_nm": row[29],  # 부서이름
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[30],  # 직위
+                "empl_rspofc": row[3],  # 직위(1001)
                 "empl_nm": row[4],  # 사원명
-                "empl_gender": row[5],  # 성별
-                "empl_mrig_yn": row[6],  # 결혼여부
+                "empl_gender": row[5],  # 성별(M/F)
+                "empl_mrig_yn": row[6],  # 결혼여부(Y/N)
                 "empl_prsl_email": row[7],  # 개인이메일
                 "empl_brthdy": row[8],  # 생년월일
-                "empl_lunisolar": row[31],  # 양음력
-                "empl_hffc_state": row[32],  # 재직상태
-                "empl_exctv_yn": row[11],  # 임원여부
+                "empl_lscld": row[9],  # 양음력(1, 2)
+                "empl_hffc_state": row[10],  # 재직상태(1, 2)
+                "empl_exctv_yn": row[11],  # 임원여부(Y/N)
                 "empl_photoid": row[12],  # 사진ID
-                "empl_frgnr_yn": row[13],  # 외국인여부
+                "empl_frgnr_yn": row[13],  # 외국인여부(Y/N)
                 "empl_telno": row[14],  # 전화번호
                 "empl_mobile_no": row[15],  # 휴대폰번호
                 "empl_retire_date": row[16],  # 퇴사일자
-                "empl_salary_form": row[33],  # 급여형태
+                "empl_salary_form": row[17],  # 급여형태(공통코드)
                 "empl_ssid": row[18],  # 주민번호
                 "empl_email": row[19],  # 이메일
-                "empl_emplyn_form": row[34],  # 고용형태
+                "empl_emplyn_form": row[20],  # 고용형태(공통코드)
                 "empl_mrig_anvsry": row[21],  # 결혼기념일
                 "empl_ssid_addr": row[22],  # 주민등록 주소
                 "empl_rlsdnc_addr": row[23],  # 실거주 주소
@@ -201,6 +177,8 @@ class EmployeeAPIViewSearch(APIView):
 
         return JsonResponse(serialized_employees, safe=False)
 
+# 입력
+
 
 class EmployeeAPIPost(APIView):
     def post(self, request):
@@ -212,78 +190,71 @@ class EmployeeAPIPost(APIView):
         attend_info = data.get('attendInfo')
         salary_info = data.get('salaryInfo')
         frgnr_info = data.get('frgnrInfo')
+        login_info = data.get('loginInfo')
 
-        print(employee_info)
+        print("attend_info", attend_info)
+
+        # 입력하는 운영자의 정보
 
         # HRM_EMPL 테이블
-        corp_no_empl = '1'  # 세션처리예정
-        dept_no_empl = employee_info.get('dept_no')
-        empl_nm_empl = employee_info.get('empl_nm')
-        ssid_empl = employee_info.get('ssid')
-        gender_empl = employee_info.get('gender')
-        brthdy_empl = employee_info.get('brthdy')
-        lunsolar_empl = employee_info.get('lunsolar')
-        mrig_yn_empl = employee_info.get('mrig_yn')
-        mrig_anvsry_empl = employee_info.get('mrig_anvsry')
-        tel_no_empl = employee_info.get('tel_no')
-        mobile_no_empl = employee_info.get('mobile_no')
-        ssid_addr_empl = employee_info.get('ssid_addr')
-        rlsdnc_addr_empl = employee_info.get('rlsdnc_addr')
-        email_empl = employee_info.get('email')
-        prsl_email_empl = employee_info.get('prsl_email')
-        exctv_yn_empl = employee_info.get('exctv_yn')
-        rspofc_empl = employee_info.get('rspofc')
-        emplym_form_empl = employee_info.get('emplym_form')
-        salary_form_empl = employee_info.get('salary_form')
-        encpnd_empl = employee_info.get('encpnd')
-        hffc_state_empl = employee_info.get('hffc_state')
-        retire_date_empl = employee_info.get('retire_date')
-        frgnr_yn_empl = employee_info.get('frgnr_yn')
-        reg_dtime_empl = now.strftime('%Y-%m-%d %H:%M:%S')
-        reg_id_empl = '관리자'  # 세션처리예정
-        upt_dtime_empl = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_empl = '운영자'  # 세션처리예정
+        hrm_empl_corp_no = login_info.get('corp_no')
+        hrm_empl_dept_no = employee_info.get('dept_no')
+        # hrm_empl_empl_no = ""  # 필요없음
+        hrm_empl_empl_rspofc = employee_info.get('empl_rspofc') or None
+        hrm_empl_empl_nm = employee_info.get('empl_nm') or None
+        hrm_empl_empl_gender = employee_info.get('empl_gender') or None
+        hrm_empl_empl_mrig_yn = employee_info.get('empl_mrig_yn') or None
+        hrm_empl_empl_prsl_email = employee_info.get('empl_prsl_email') or None
+        hrm_empl_empl_brthdy = employee_info.get('empl_brthdy') or None
+        hrm_empl_empl_lscld = employee_info.get('empl_lscld') or None
+        hrm_empl_empl_hffc_state = employee_info.get('empl_hffc_state') or None
+        hrm_empl_empl_exctv_yn = employee_info.get('empl_exctv_yn') or None
+        hrm_empl_empl_photoid = employee_info.get('empl_photoid') or None
+        hrm_empl_empl_frgnr_yn = employee_info.get('empl_frgnr_yn') or None
+        hrm_empl_empl_telno = employee_info.get('empl_telno') or None
+        hrm_empl_empl_mobile_no = employee_info.get('empl_mobile_no') or None
+        hrm_empl_empl_retire_date = employee_info.get(
+            'empl_retire_date') or None
+        hrm_empl_empl_salary_form = employee_info.get(
+            'empl_salary_form') or None
+        hrm_empl_empl_ssid = employee_info.get('empl_ssid') or None
+        hrm_empl_empl_email = employee_info.get('empl_email') or None
+        hrm_empl_empl_emplyn_form = employee_info.get(
+            'empl_emplyn_form') or None
+        hrm_empl_empl_mrig_anvsry = employee_info.get(
+            'empl_mrig_anvsry') or None
+        hrm_empl_empl_ssid_addr = employee_info.get('empl_ssid_addr') or None
+        hrm_empl_empl_rlsdnc_addr = employee_info.get(
+            'empl_rlsdnc_addr') or None
+        hrm_empl_empl_encpnd = employee_info.get('empl_encpnd') or None
+        hrm_empl_empl_reg_dtime = now.strftime('%Y-%m-%d %H:%M:%S') or None
+        hrm_empl_empl_reg_id = login_info.get('login_id')
 
         # HRM_ATEND 테이블
-        # empl_no_atend = '1' #필요없음
-        corp_no_atend = '1'  # 세션처리예정
-        dept_no_atend = employee_info.get('dept_no')  # 세션처리예정
-        base_attendtime_atend = attend_info.get('base_attendtime')
-        base_lvofctime_atend = attend_info.get('base_lvofctime')
-        mdwk_workday_atend = attend_info.get('mdwk_workday')
-        whday_atend = attend_info.get('whday')
-        crtlwh_atend = attend_info.get('crtlwh')
-        upt_dtime_atend = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_atend = '운영자'  # 세션처리예정
+        hrm_atend_base_attendtime = attend_info.get('base_attendtime') or None
+        hrm_atend_base_lvofctime = attend_info.get('base_lvofctime') or None
+        hrm_atend_mdwk_workday = attend_info.get('mdwk_workday') or None
+        hrm_atend_whday = attend_info.get('whday') or None
+        hrm_atend_crtlwh = attend_info.get('crtlwh') or None
 
         # HRM_SALARY 테이블
-        # empl_no_salary = '1' #필요없음
-        corp_no_salary = '1'  # 세션처리예정
-        dept_no_salary = employee_info.get('dept_no')  # 세션처리예정
-        base_salary_salary = salary_info.get('base_salary')
-        trn_bank_salary = salary_info.get('trn_bank')
-        acc_no_salary = salary_info.get('acc_no')
-        npn_pay_yn_salary = salary_info.get('npn_pay_yn')
-        npn_mrmrtn_salary = salary_info.get('npn_mrmrtn')
-        hlthins_pay_yn_salary = salary_info.get('hlthins_pay_yn')
-        hlthins_mrmrtn_salary = salary_info.get('hlthins_mrmrtn')
-        empins_pay_yn_salary = salary_info.get('empins_pay_yn')
-        empins_mrmrtn_salary = salary_info.get('empins_mrmrtn')
-        upt_dtime_salary = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_salary = '운영자'  # 세션처리예정
+        hrm_salary_base_salary = salary_info.get('base_salary') or None
+        hrm_salary_trn_bank = salary_info.get('trn_bank') or None
+        hrm_salary_acc_no = salary_info.get('acc_no') or None
+        hrm_salary_npn_pay_yn = salary_info.get('npn_pay_yn') or None
+        hrm_salary_npn_mrmrtn = salary_info.get('npn_mrmrtn') or None
+        hrm_salary_hlthins_pay_yn = salary_info.get('hlthins_pay_yn') or None
+        hrm_salary_hlthins_mrmrtn = salary_info.get('hlthins_mrmrtn') or None
+        hrm_salary_empins_pay_yn = salary_info.get('empins_pay_yn') or None
+        hrm_salary_rperins_pay_yn = salary_info.get('rperins_pay_yn') or None
+        hrm_salary_wthtx_taxrt = salary_info.get('wthtx_taxrt')  # 미완성
 
         # HRM_FRGNR 테이블
-        empl_no_frgnr = '1'  # 세션처리예정
-        corp_no_frgnr = '1'  # 세션처리예정
-        dept_no_frgnr = employee_info.get('dept_no')  # 세션처리예정
-        dtrmcexp_date_frgnr = frgnr_info.get('dtrmcexp_date')
-        dtrmcexp_icny_frgnr = frgnr_info.get('dtrmcexp_icny')
-        dtrmcexp_insrnc_amt_frgnr = frgnr_info.get('dtrmcexp_insrnc_amt')
-        remark_frgnr = ''
-        upt_dtime_frgnr = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_frgnr = '운영자'  # 세션처리예정
-
-        corp_no = 1
+        hrm_frgnr_dtrmcexp_date = frgnr_info.get('dtrmcexp_date') or None
+        hrm_frgnr_dtrmcexp_icny = frgnr_info.get('dtrmcexp_icny') or None
+        hrm_frgnr_dtrmcexp_insrnc_amt = frgnr_info.get(
+            'dtrmcexp_insrnc_amt') or None
+        hrm_frgnr_remark = frgnr_info.get('remark') or None
 
         try:
             # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
@@ -291,56 +262,44 @@ class EmployeeAPIPost(APIView):
                 with connection.cursor() as cursor:
 
                     cursor.execute(
-                        "SELECT MAX(CAST(EMPL_NO AS UNSIGNED)) FROM HRM_EMPL WHERE CORP_NO = %s", [corp_no])
+                        "SELECT MAX(CAST(EMPL_NO AS UNSIGNED)) FROM HRM_EMPL WHERE CORP_NO = %s", [hrm_empl_corp_no])
                     max_num = cursor.fetchone()[0]
                     max_value = (int(max_num) if max_num else 0) + 1
 
                     sql_query = """
-                                    INSERT INTO HRM_EMPL (
-                                        CORP_NO, DEPT_NO, EMPL_NO, EMPL_NM, SSID, GENDER, BRTHDY, LUNISOLAR, MRIG_YN, MRIG_ANVSRY,
-                                        TEL_NO, MOBILE_NO, SSID_ADDR, RLRSDNC_ADDR, EMAIL, PRSL_EMAIL, EXCTV_YN, OFCPS,
-                                        EMPLYM_FORM, SALARY_FORM, ENCPND, HFFC_STATE, RETIRE_DATE, FRGNR_YN, REG_DTIME,
-                                        REG_ID, UPT_DTIME, UPT_ID)
-                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                    INSERT INTO HRM_EMPL
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NULL, NULL)
                                     """
-                    cursor.execute(sql_query, [
-                        corp_no_empl, dept_no_empl, max_value, empl_nm_empl, ssid_empl, gender_empl, brthdy_empl, lunsolar_empl, mrig_yn_empl, mrig_anvsry_empl,
-                        tel_no_empl, mobile_no_empl, ssid_addr_empl, rlsdnc_addr_empl, email_empl, prsl_email_empl, exctv_yn_empl, rspofc_empl,
-                        emplym_form_empl, salary_form_empl, encpnd_empl, hffc_state_empl, retire_date_empl, frgnr_yn_empl, reg_dtime_empl,
-                        reg_id_empl, upt_dtime_empl, upt_id_empl
-                    ])
+                    cursor.execute(sql_query, [hrm_empl_corp_no, hrm_empl_dept_no, max_value, hrm_empl_empl_rspofc, hrm_empl_empl_nm, hrm_empl_empl_gender, hrm_empl_empl_mrig_yn,
+                                               hrm_empl_empl_prsl_email, hrm_empl_empl_brthdy, hrm_empl_empl_lscld, hrm_empl_empl_hffc_state, hrm_empl_empl_exctv_yn, hrm_empl_empl_photoid,
+                                               hrm_empl_empl_frgnr_yn, hrm_empl_empl_telno, hrm_empl_empl_mobile_no, hrm_empl_empl_retire_date, hrm_empl_empl_salary_form, hrm_empl_empl_ssid,
+                                               hrm_empl_empl_email, hrm_empl_empl_emplyn_form, hrm_empl_empl_mrig_anvsry, hrm_empl_empl_ssid_addr, hrm_empl_empl_rlsdnc_addr, hrm_empl_empl_encpnd,
+                                               hrm_empl_empl_reg_dtime, hrm_empl_empl_reg_id
+                                               ])
 
                     sql_query_atend = """
-                                            INSERT INTO HRM_ATEND (
-                                                EMPL_NO, CORP_NO, DEPT_NO, BASE_ATENDTIME, BASE_LVOFCTIME, MDWK_WORKDAY, WHDAY, CRTLWH, UPT_DTIME, UPT_ID)
-                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                            INSERT INTO HRM_ATEND
+                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NULL, NULL)
                                             """
-                    cursor.execute(sql_query_atend, [
-                        max_value, corp_no_atend, dept_no_atend, base_attendtime_atend,
-                        base_lvofctime_atend, mdwk_workday_atend, whday_atend, crtlwh_atend, upt_dtime_atend, upt_id_atend
-                    ])
+                    cursor.execute(sql_query_atend, [max_value, hrm_empl_corp_no, hrm_empl_dept_no, hrm_atend_base_attendtime,
+                                                     hrm_atend_base_lvofctime, hrm_atend_mdwk_workday, hrm_atend_whday, hrm_atend_crtlwh
+                                                     ])
 
                     sql_query_salary = """
-                                            INSERT INTO HRM_SALARY (
-                                                EMPL_NO, CORP_NO, DEPT_NO, BASE_SALARY, TRN_BANK, ACC_NO, NPN_PAY_YN, NPN_MRMRTN, 
-                                                HLTHINS_PAY_YN, HLTHINS_MRMRTN, EMPINS_PAY_YN, UPT_DTIME, UPT_ID)
-                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                            INSERT INTO HRM_SALARY
+                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NULL, NULL, NULL)
                                             """
-                    cursor.execute(sql_query_salary, [
-                        max_value, corp_no_salary, dept_no_salary, base_salary_salary, trn_bank_salary, acc_no_salary,
-                        npn_pay_yn_salary, npn_mrmrtn_salary, hlthins_pay_yn_salary, hlthins_mrmrtn_salary, empins_pay_yn_salary,
-                        empins_mrmrtn_salary, upt_dtime_salary, upt_id_salary
-                    ])
+                    cursor.execute(sql_query_salary, [max_value, hrm_empl_corp_no, hrm_empl_dept_no, hrm_salary_base_salary, hrm_salary_trn_bank, hrm_salary_acc_no, hrm_salary_npn_pay_yn,
+                                                      hrm_salary_npn_mrmrtn, hrm_salary_hlthins_pay_yn, hrm_salary_hlthins_mrmrtn, hrm_salary_empins_pay_yn, hrm_salary_rperins_pay_yn,
+                                                      ])
 
                     sql_query_frgnr = """
-                                            INSERT INTO HRM_FRGNR (
-                                                EMPL_NO, CORP_NO, DEPT_NO, DTRMCEXP_DATE, DTRMCEXP_ICNY, DTRMCEXP_INSRNC_AMT, REMARK, UPT_DTIME, UPT_ID)
-                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                            INSERT INTO HRM_FRGNR
+                                            VALUES (%s, %s, %s, %s, %s, %s, %s, NULL, NULL )
                                             """
-                    cursor.execute(sql_query_frgnr, [
-                        max_value, corp_no_frgnr, dept_no_frgnr, dtrmcexp_date_frgnr,
-                        dtrmcexp_icny_frgnr, dtrmcexp_insrnc_amt_frgnr, remark_frgnr, upt_dtime_frgnr, upt_id_frgnr
-                    ])
+                    cursor.execute(sql_query_frgnr, [max_value, hrm_empl_corp_no, hrm_empl_dept_no, hrm_frgnr_dtrmcexp_date,
+                                                     hrm_frgnr_dtrmcexp_icny, hrm_frgnr_dtrmcexp_insrnc_amt, hrm_frgnr_remark
+                                                     ])
 
             return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
@@ -505,25 +464,25 @@ class EmployeeAPIDetailTable(APIView):
                 "dept_no": row[1],  # 부서번호
                 "dept_nm": row[29],  # 부서이름
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[30],  # 직위
+                "empl_rspofc": row[3],  # 직위(1001)
                 "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
                 "empl_mrig_yn": row[6],  # 결혼여부
                 "empl_prsl_email": row[7],  # 개인이메일
                 "empl_brthdy": row[8],  # 생년월일
-                "empl_lscld": row[9],  # 양음력
-                "empl_lunisolar": row[31],  # 양음력(양력 음력으로 나오게)
-                "empl_hffc_state": row[32],  # 재직상태
+                "empl_lscld": row[9],  # 양음력(1,2)
+                "empl_lunisolar": row[31],  # 양음력(양력,음력)
+                "empl_hffc_state": row[10],  # 재직상태(1,2)
                 "empl_exctv_yn": row[11],  # 임원여부
                 "empl_photoid": row[12],  # 사진ID
                 "empl_frgnr_yn": row[13],  # 외국인여부
                 "empl_telno": row[14],  # 전화번호
                 "empl_mobile_no": row[15],  # 휴대폰번호
                 "empl_retire_date": row[16],  # 퇴사일자
-                "empl_salary_form": row[33],  # 급여형태
+                "empl_salary_form": row[17],  # 급여형태(0001)
                 "empl_ssid": row[18],  # 주민번호
                 "empl_email": row[19],  # 이메일
-                "empl_emplyn_form": row[34],  # 고용형태
+                "empl_emplyn_form": row[20],  # 고용형태(0001)
                 "empl_mrig_anvsry": row[21],  # 결혼기념일
                 "empl_ssid_addr": row[22],  # 주민등록 주소
                 "empl_rlsdnc_addr": row[23],  # 실거주 주소
@@ -616,7 +575,7 @@ class EmployeeAPIDetailSalary(APIView):
                 "corp_no": row[1],  # 회사번호
                 "dept_no": row[2],  # 부서번호
                 "base_salary": row[3],  # 기본급여
-                "trn_bank": row[4],  # 이체은행
+                "trn_bank": row[4],  # 이체은행(0001)
                 "acc_no": row[5],   # 계좌번호
                 "npn_pay_yn": row[6],   # 국민연금납부여부(O/X)
                 "npn_mrmrtn": row[7],   # 국민연금월보수액
@@ -625,6 +584,8 @@ class EmployeeAPIDetailSalary(APIView):
                 "empins_pay_yn": row[10],   # 고용보험납부여부(O/X)
                 "rperins_pay_yn": row[11],  # 요양보험납부여부(O/X)
                 "wthtx_taxrt": row[12],  # 원천징수세율
+                "upt_dtime": row[13],  # 수정일시
+                "upt_id": row[14],  # 수정자
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -633,33 +594,6 @@ class EmployeeAPIDetailSalary(APIView):
 
 
 class EmployeeAPIDetailFrgnr(APIView):
-    def get(self, request):
-
-        empl_id_detail = request.GET.get('empl_id_detail', None)
-
-        cursor = connection.cursor()
-        cursor.execute(
-            " SELECT * FROM HRM_FRGNR WHERE EMPL_NO = %s", [empl_id_detail])
-
-        serialized_employees = []
-
-        for row in cursor.fetchall():
-            serialized_empl = {
-                "epml_no": row[0],  # 사원번호
-                "corp_no": row[1],  # 회사번호
-                "dept_no": row[2],  # 부서번호
-                "dtrmcexp_date": row[3],    # 출국만기일
-                "dtrmcexp_icny": row[4],    # 출국만기보험사(O/X)
-                "dtrmcexp_insrnc_amt": row[5],  # 출국만기보험금액
-                "remark": row[6],   # 비고
-            }
-            print(serialized_empl)
-            serialized_employees.append(serialized_empl)
-
-        return JsonResponse(serialized_employees, safe=False)
-
-
-class EmployeeAPIDetailTableFmly(APIView):
     def get(self, request):
 
         empl_id_detail = request.GET.get('empl_id_detail', None)
@@ -687,15 +621,68 @@ class EmployeeAPIDetailTableFmly(APIView):
 
         for row in cursor.fetchall():
             serialized_empl = {
-                "empl_no": row[0],  # 사원번호
+                "epml_no": row[0],  # 사원번호
                 "corp_no": row[1],  # 회사번호
                 "dept_no": row[2],  # 부서번호
                 "dtrmcexp_date": row[3],    # 출국만기일
                 "dtrmcexp_icny": row[4],    # 출국만기보험사(O/X)
                 "dtrmcexp_insrnc_amt": row[5],  # 출국만기보험금액
                 "remark": row[6],   # 비고
-                "upt_dtime": row[7],    # 수정일시
-                "upt_id": row[8],   # 수정자
+                "upt_dtime": row[7],  # 수정일시
+                "upt_id": row[8],  # 수정자
+            }
+            print(serialized_empl)
+            serialized_employees.append(serialized_empl)
+
+        return JsonResponse(serialized_employees, safe=False)
+
+
+class EmployeeAPIDetailTableFmly(APIView):
+    def get(self, request):
+
+        empl_id_detail = request.GET.get('empl_id_detail', None)
+        corp_no = request.GET.get('corp_no', None)
+
+        sql_query = """
+            select hf.*, cc.CD_VAL AS RELTN_VAL
+            from HRM_FMLY hf
+            JOIN CMM_CODE cc
+            ON cc.LCODE = '0012' AND hf.RELTN = cc.SCODE
+            where 1=1
+        """
+        values = []
+
+        if empl_id_detail and empl_id_detail != 'undefined':
+            sql_query += " AND EMPL_NO = %s "
+            values.append(empl_id_detail)
+
+        if corp_no and corp_no != 'undefined':
+            sql_query += " AND CORP_NO = %s "
+            values.append(corp_no)
+
+        # SQL 쿼리 실행
+        cursor = connection.cursor()
+        cursor.execute(sql_query, values)
+        serialized_employees = []
+
+        for row in cursor.fetchall():
+            serialized_empl = {
+                "empl_no": row[0],  # 사원번호
+                "corp_no": row[1],  # 회사번호
+                "dept_no": row[2],  # 부서번호
+                "fmly_no": row[3],  # 가족번호
+                "reltn": row[4],  # 관계(0001)
+                "constnt_nm": row[5],  # 구성원 이름
+                "brthdy": row[6],  # 생년월일
+                "livtgt_yn": row[7],  # 동거여부(Y/N)
+                "dednhope_yn": row[8],  # 공제희망여부(O/X)
+                "dspsn_yn": row[9],  # 장애인여부(O/X)
+                "remark": row[10],  # 비고
+                "reg_dtime": row[11],  # 등록일시
+                "reg_id": row[12],  # 등록자id
+                "upt_dtime": row[13],  # 수정일시
+                "upt_id": row[14],  # 수정자id
+                "reltn_val": row[15],  # 관계(부, 모)
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
