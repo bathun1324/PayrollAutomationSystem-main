@@ -68,6 +68,7 @@ urlpatterns = [
     path('get_corporationinfo/', CorporationInfoAPIView.as_view()),
     path('search_corporationinfo/', CorporationInfoAPISearch.as_view()),
     path('post_corporation/', CorporationAPIPost.as_view()),
+    path('post_corporationupdate/', CorporationAPIUpdate.as_view()),
     path('get_info/', CorporationGetInfo.as_view()),
     path('get_ofcps/', CorporationGetOfcps.as_view()),
 

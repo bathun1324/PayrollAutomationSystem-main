@@ -24,10 +24,11 @@ class CorporationInfoAPIView(APIView):
     def get(self, request):
         
         cmpy_detail = request.GET.get('cmpy_detail', None)
+        print(cmpy_detail)
         
         if(cmpy_detail):
             sql_query = """
-            SELECT * FROM COM_CORP a, COM_CNTRCT b WHERE a.CORP_NO = b.CORP_NO WHERE a.CORP_NO = """ + cmpy_detail + """
+            SELECT * FROM COM_CORP a, COM_CNTRCT b WHERE a.CORP_NO = b.CORP_NO AND a.CORP_NO = """ + cmpy_detail + """
             """         
         else:
             sql_query = """
@@ -52,15 +53,25 @@ class CorporationInfoAPIView(APIView):
                 "addr": row[5],
                 "empl_num": row[6],
                 "mngr_nm": row[7],
-                "rspofc": row[8],
+                "ofcps": row[8],
                 "corp_telno": row[9],
                 "email": row[10],
                 "mobile_no": row[11],
                 "mngr_id": row[12],
+                "info1": row[13],
+                "info2": row[14],
+                "info3": row[15],
+                "info4": row[16],
+                "logo_id": row[17],
+                "remark": row[18],
                 "cntrct_form": row[24],
                 "state": row[25],
                 "cntrct_date": row[26],
                 "exp_date": row[27],
+                "pmt_date": row[28],
+                "ter_date": row[29],
+                "mtyvc_stl_std": row[30],
+                "tml_use_yn": row[31],
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -109,7 +120,7 @@ class CorporationInfoAPISearch(APIView):
                 "addr": row[5],
                 "empl_num": row[6],
                 "mngr_nm": row[7],
-                "rspofc": row[8],
+                "ofcps": row[8],
                 "corp_telno": row[9],
                 "email": row[10],
                 "mobile_no": row[11],
@@ -146,7 +157,7 @@ class CorporationDetailInfoAPIView(APIView):
                 "empl_num": row[6],
                 "logo_id": row[7],
                 "mngr_nm": row[8],
-                "rspofc": row[9],
+                "ofcps": row[9],
                 "corp_telno": row[10],
                 "email": row[11],
                 "mobile_no": row[12],
@@ -216,7 +227,7 @@ class CorporationAPIPost(APIView):
         corp_no_cntrct = corporation_info.get('corp_no')  # 세션처리예정
         cntrct_form = corporation_info.get('cntrct_form')  # 세션처리예정
         state = cntrct_info.get('state')
-        cntcrt_date = cntrct_info.get('cntcrt_date')
+        cntrct_date = cntrct_info.get('cntcrt_date')
         exp_date = cntrct_info.get('exp_date')
         pmt_date = cntrct_info.get('pmt_date')
         ter_date = cntrct_info.get('ter_date')
@@ -271,7 +282,7 @@ class CorporationAPIPost(APIView):
                                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                                         """
                     cursor.execute(sql_query_cntrct, [
-                        max_num, cntrct_form, state, cntcrt_date,
+                        max_num, cntrct_form, state, cntrct_date,
                         exp_date, pmt_date, ter_date, mtyvc_stl_std, tml_use_yn, upt1, gen2
                     ])
                     
@@ -341,6 +352,88 @@ class CorporationAPIPost(APIView):
                         cursor.execute(sql_query_atend, [
                             max_num, '000'+str(atend_count+1) , atend_name[atend_count], empl_atend[atend_count][3], empl_atend[atend_count][4], '1', gen1, gen2, upt1, gen2
                         ])
+
+            return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            logger.error(e)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class CorporationAPIUpdate(APIView):
+    def post(self, request):
+        # POST 요청에서 전달된 데이터 가져오기
+        data = request.data
+        now = datetime.now()
+
+        corporation_info = data.get('corporationinfo')
+        cntrct_info = data.get('cntrctinfo')
+
+        print(corporation_info)
+        print(cntrct_info)
+
+        # HRM_EMPL 테이블
+        corp_no_empl = corporation_info.get('corp_no')  # 세션처리예정
+        corp_nm_empl = corporation_info.get('corp_nm')
+        repre_nm_empl = corporation_info.get('repre_nm')
+        repre_telno_empl = corporation_info.get('repre_telno')
+        bizm_no_empl = corporation_info.get('bizm_no')
+        addr_empl = corporation_info.get('addr')
+        empl_num_empl = corporation_info.get('empl_num')
+        mngr_nm_empl = corporation_info.get('mngr_nm')
+        ofcps_empl = corporation_info.get('ofcps')
+        corp_telno_empl = corporation_info.get('corp_telno')
+        email_empl = corporation_info.get('email')
+        mobile_no_empl = corporation_info.get('mobile_no')
+        mngr_id_empl = corporation_info.get('mngr_id')
+        dept_info = corporation_info.get('info1')
+        ofcps_info = corporation_info.get('info2')
+        atend_info = corporation_info.get('info3')
+        salary_info = corporation_info.get('info4')
+        #logo_id = corporation_info.get('logo_id')
+        logo_id = '1'
+        #remark = corporation_info.get('remark')
+        remark = '1'
+        gen1 = now.strftime('%Y-%m-%d %H:%M:%S')
+        gen2 = corporation_info.get('gen2')
+        upt1 = now.strftime('%Y-%m-%d %H:%M:%S')
+        upt2 = corporation_info.get('gen2')
+        
+        
+        # HRM_ATEND 테이블
+        # empl_no_atend = '1' #필요없음
+        corp_no_cntrct = corporation_info.get('corp_no')  # 세션처리예정
+        cntrct_form = corporation_info.get('cntrct_form')  # 세션처리예정
+        state = corporation_info.get('state')
+        cntrct_date = corporation_info.get('cntrct_date')
+        exp_date = corporation_info.get('exp_date')
+        pmt_date = corporation_info.get('pmt_date')
+        ter_date = corporation_info.get('ter_date')
+        tml_use_yn = corporation_info.get('tml_use_yn')
+        exp_date = corporation_info.get('exp_date')
+        mtyvc_stl_std = corporation_info.get('mtyvc_stl_std')
+
+        try:
+            # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+            with transaction.atomic():
+                with connection.cursor() as cursor:
+
+                    sql_query = """
+                                    UPDATE COM_CORP SET CORP_NM = %s, REPRE_NM = %s, BIZM_NO = %s, REPRE_TELNO = %s, ADDR = %s, EMPL_NUM = %s, MNGR_NM = %s, OFCPS = %s, CORP_TELNO = %s, EMAIL = %s, MOBILE_NO = %s, MNGR_ID = %s, `DEPT INFO` = %s, `OFCPS INFO` = %s, `ATEND INFO` = %s, `SALARY INFO` = %s, LOGO_ID = %s, REMARK = %s, UPT_DTIME = %s, UPT_ID = %s
+                                    WHERE CORP_NO = %s
+                                """
+                    cursor.execute(sql_query, [
+                        corp_nm_empl, repre_nm_empl, repre_telno_empl, bizm_no_empl, addr_empl, empl_num_empl, mngr_nm_empl, ofcps_empl, corp_telno_empl, email_empl, mobile_no_empl, mngr_id_empl, dept_info, ofcps_info, atend_info, salary_info, logo_id, remark, upt1, upt2, corp_no_empl
+                    ])
+
+                    sql_query_cntrct = """
+                                        UPDATE COM_CNTRCT SET CNTRCT_FORM = %s, STATE = %s, CNTRCT_DATE = %s, EXP_DATE = %s, PMT_DATE = %s, TER_DATE = %s, MTYVC_STL_STD = %s, TML_USE_YN = %s, UPT_DTIME = %s, UPT_ID = %s
+                                        WHERE CORP_NO = %s
+                                        """
+                    cursor.execute(sql_query_cntrct, [
+                        cntrct_form, state, cntrct_date,
+                        exp_date, pmt_date, ter_date, mtyvc_stl_std, tml_use_yn, upt1, gen2, corp_no_empl
+                    ])
 
             return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
