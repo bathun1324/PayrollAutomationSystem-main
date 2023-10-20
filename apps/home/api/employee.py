@@ -315,6 +315,9 @@ class EmployeeAPIFmly(APIView):
         data_array = request.data
         now = datetime.now()
 
+        # 저장버튼을 누르면 값이 입력한 값이들어온다.
+        # 부서데이터값을 가져온다.
+
         for data in data_array:
             # HRM_FMLY 테이블
             empl_no_fmly = '1'  # 세션처리예정
@@ -654,12 +657,14 @@ class EmployeeAPIDetailTableFmly(APIView):
         values = []
 
         if empl_id_detail and empl_id_detail != 'undefined':
-            sql_query += " AND EMPL_NO = %s "
+            sql_query += " AND hf.EMPL_NO = %s "
             values.append(empl_id_detail)
 
         if corp_no and corp_no != 'undefined':
-            sql_query += " AND CORP_NO = %s "
+            sql_query += " AND hf.CORP_NO = %s "
             values.append(corp_no)
+
+        sql_query += "ORDER BY CAST(hf.FMLY_NO AS UNSIGNED)"
 
         # SQL 쿼리 실행
         cursor = connection.cursor()
@@ -849,3 +854,56 @@ class EmployeeAPIEmploymentType(APIView):
             serialized_departments.append(serialized_dept)
 
         return JsonResponse(serialized_departments, safe=False)
+
+# 가족관계 데이터 생성
+
+
+class EmployeeAPIPostFmly(APIView):
+    def post(self, request):
+        # POST 요청에서 전달된 데이터 가져오기
+        data = request.data
+        now = datetime.now()
+
+        fmly_info = data.get('data')
+        login_info = data.get('loginInfo')
+        userdata_info = data.get('userdata')
+
+        hrm_fmly_empl_no = userdata_info.get('empl_no')
+        hrm_fmpy_corp_no = login_info.get('corp_no')
+        hrm_fmpy_dept_no = userdata_info.get('dept_no')
+        hrm_fmpy_fmly_no = login_info.get('corp_no')  # 자동채번
+        hrm_fmpy_reltn = fmly_info.get('reltn') or None
+        hrm_fmpy_reltn_val = fmly_info.get('reltn_val') or None  # 사용안함
+        hrm_fmpy_constnt_nm = fmly_info.get('constnt_nm') or None
+        hrm_fmpy_brthdy = fmly_info.get('brthdy') or None
+        hrm_fmpy_livtgt_yn = fmly_info.get('livtgt_yn') or None
+        hrm_fmpy_dednhope_yn = fmly_info.get('dednhope_yn') or None
+        hrm_fmpy_dspsn_yn = fmly_info.get('dspsn_yn') or None
+        hrm_fmpy_remark = fmly_info.get('corp_no') or None  # 사용안함
+        hrm_fmpy_reg_dtime = now.strftime('%Y-%m-%d %H:%M:%S')
+        hrm_fmpy_reg_id = login_info.get('login_id') or None
+
+        try:
+            # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+            with transaction.atomic():
+                with connection.cursor() as cursor:
+
+                    cursor.execute(
+                        "SELECT MAX(CAST(FMLY_NO AS UNSIGNED)) FROM HRM_FMLY WHERE CORP_NO = %s AND EMPL_NO = %s", [hrm_fmpy_corp_no, hrm_fmly_empl_no])
+                    max_num = cursor.fetchone()[0]
+                    # 가족번호
+                    max_value = (int(max_num) if max_num else 0) + 1
+
+                    sql_query = """
+                                    INSERT INTO HRM_FMLY
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NULL, %s, %s, NULL, NULL)
+                                    """
+                    cursor.execute(sql_query, [hrm_fmly_empl_no, hrm_fmpy_corp_no, hrm_fmpy_dept_no, max_value, hrm_fmpy_reltn, hrm_fmpy_constnt_nm, hrm_fmpy_brthdy,
+                                               hrm_fmpy_livtgt_yn, hrm_fmpy_dednhope_yn, hrm_fmpy_dspsn_yn, hrm_fmpy_reg_dtime, hrm_fmpy_reg_id
+                                               ])
+
+            return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            logger.error(e)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

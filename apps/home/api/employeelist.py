@@ -45,7 +45,7 @@ class EmployeelistAPIView(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[3], # 직위
+                "empl_rspofc": row[3],  # 직위
                 "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
                 "empl_reg_dtime": row[6],
@@ -123,7 +123,7 @@ class EmployeelistAPISearch(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[3], # 직위
+                "empl_rspofc": row[3],  # 직위
                 "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
                 "empl_reg_dtime": row[6],
@@ -180,7 +180,7 @@ class RetireemployeelistAPIView(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[3], # 직위
+                "empl_rspofc": row[3],  # 직위
                 "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
                 "empl_reg_dtime": row[6],
@@ -261,7 +261,7 @@ class RetireemployeelistAPISearch(APIView):
                 "no": row[0],  # 회사번호
                 "id": row[1],  # 부서번호
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[3], # 직위
+                "empl_rspofc": row[3],  # 직위
                 "empl_nm": row[4],  # 사원명
                 "empl_gender": row[5],  # 성별
                 "empl_reg_dtime": row[6],

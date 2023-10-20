@@ -40,6 +40,7 @@ urlpatterns = [
     path('get_detailsalary/', EmployeeAPIDetailSalary.as_view()),
     path('get_detailfrgnr/', EmployeeAPIDetailFrgnr.as_view()),
     path('get_detailtablefmly/', EmployeeAPIDetailTableFmly.as_view()),
+    path('post_employeesfmly/', EmployeeAPIPostFmly.as_view()),
 
     # attendance
     path('get_attendace/', AttendanceAPIView.as_view()),
