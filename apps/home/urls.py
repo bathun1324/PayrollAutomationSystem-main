@@ -75,5 +75,6 @@ urlpatterns = [
     # cmm_code 공통코드
     path('get_codeEmploymentType/', CodeEmploymentTypeAPIView.as_view()),
     path('get_codesalaryform/', CodeSalaryFormAPIView.as_view()),
-    path('get_codetrnbank/,', CodeTrnBankAPIView.as_view()),
+    path('get_codetrnbank/', CodeTrnBankAPIView.as_view()),
+    path('get_codefmlyreltn/', CodeFmlyReltnAPIView.as_view()),
 ]
