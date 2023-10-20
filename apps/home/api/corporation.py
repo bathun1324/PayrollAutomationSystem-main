@@ -319,10 +319,10 @@ class CorporationAPIPost(APIView):
                                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                                             """
                         cursor.execute(sql_query_ofcps, [
-                            max_num, '000'+str(ofcps_count), ofcps_name[ofcps_count], '1', gen1, gen2, upt1, gen2
+                            max_num, '100'+str(ofcps_count+1), ofcps_name[ofcps_count], '1', gen1, gen2, upt1, gen2
                         ])
                         
-                    for salary_count in range(0, 8):
+                    for salary_count in range(0, 9):
                         sql_query_salary = """
                                             INSERT INTO BIM_SALARY (
                                                 CORP_NO, SALARY_ITEM, SALARY_TYPE, ITEM_NM, TAXT_YN, TRMMG_UNIT, USE_YN, STD_INFO_VAL, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
@@ -335,11 +335,11 @@ class CorporationAPIPost(APIView):
                     for atend_count in range(0, 10):
                         sql_query_atend = """
                                             INSERT INTO BIM_ATEND (
-                                                CORP_NO, LABORTIME_TYPE, LABOR_TIME_NM, ST_TIME, END_TIME, STATE, REG_ID, UPT_DTIME, UPT_ID)
-                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                                CORP_NO, LABORTIME_TYPE, LABOR_TIME_NM, ST_TIME, END_TIME, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
+                                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                                             """
                         cursor.execute(sql_query_atend, [
-                            max_num, '000'+str(atend_count) ,atend_name, empl_atend[atend_count][3], empl_atend[atend_count][4], '1', gen1, gen2, upt1, gen2
+                            max_num, '000'+str(atend_count+1) , atend_name[atend_count], empl_atend[atend_count][3], empl_atend[atend_count][4], '1', gen1, gen2, upt1, gen2
                         ])
 
             return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
