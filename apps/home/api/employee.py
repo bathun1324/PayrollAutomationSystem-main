@@ -50,6 +50,7 @@ class EmployeeAPIView(APIView):
         WHERE cc.LCODE = '0010' AND cc.SCODE = he.EMPLYM_FORM
         ) sel
         ON sel.EMPL_NO = empl.EMPL_NO
+        ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
         """
         # SQL 쿼리 실행
         cursor = connection.cursor()
@@ -700,136 +701,126 @@ class EmployeeupdateAPIPost(APIView):
         attend_info = data.get('attendInfo')
         salary_info = data.get('salaryInfo')
         frgnr_info = data.get('frgnrInfo')
+        login_info = data.get('loginInfo')
 
-        print(employee_info)
+        # 입력하는 운영자의 정보
 
         # HRM_EMPL 테이블
-        corp_no_empl = '1'  # 세션처리예정
-        dept_no_empl = employee_info.get('dept_no')
-        empl_nm_empl = employee_info.get('empl_nm')
-        ssid_empl = employee_info.get('ssid')
-        gender_empl = employee_info.get('gender')
-        brthdy_empl = employee_info.get('brthdy')
-        lunisolar_empl = employee_info.get('lunisolar')
-        mrig_yn_empl = employee_info.get('mrig_yn')
-        mrig_anvsry_empl = employee_info.get('mrig_anvsry')
-        tel_no_empl = employee_info.get('tel_no')
-        mobile_no_empl = employee_info.get('mobile_no')
-        ssid_addr_empl = employee_info.get('ssid_addr')
-        rlsdnc_addr_empl = employee_info.get('rlsdnc_addr')
-        email_empl = employee_info.get('email')
-        prsl_email_empl = employee_info.get('prsl_email')
-        exctv_yn_empl = employee_info.get('exctv_yn')
-        rspofc_empl = employee_info.get('rspofc')
-        emplym_form_empl = employee_info.get('emplym_form')
-        salary_form_empl = employee_info.get('salary_form')
-        encpnd_empl = employee_info.get('encpnd')
-        hffc_state_empl = employee_info.get('hffc_state')
-        retire_date_empl = employee_info.get('retire_date')
-        frgnr_yn_empl = employee_info.get('frgnr_yn')
-        reg_id_empl = '관리자'  # 세션처리예정
-        upt_dtime_empl = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_empl = '운영자'  # 세션처리예정
+        hrm_empl_corp_no = login_info.get('corp_no')
+        hrm_empl_dept_no = employee_info.get('dept_no')
+        hrm_empl_empl_no = employee_info.get('empl_no')
+        hrm_empl_empl_rspofc = employee_info.get('empl_rspofc') or None
+        hrm_empl_empl_nm = employee_info.get('empl_nm') or None
+        hrm_empl_empl_gender = employee_info.get('empl_gender') or None
+        hrm_empl_empl_mrig_yn = employee_info.get('empl_mrig_yn') or None
+        hrm_empl_empl_prsl_email = employee_info.get('empl_prsl_email') or None
+        hrm_empl_empl_brthdy = employee_info.get('empl_brthdy') or None
+        hrm_empl_empl_lscld = employee_info.get('empl_lscld') or None
+        hrm_empl_empl_hffc_state = employee_info.get('empl_hffc_state') or None
+        hrm_empl_empl_exctv_yn = employee_info.get('empl_exctv_yn') or None
+        hrm_empl_empl_photoid = employee_info.get('empl_photoid') or None
+        hrm_empl_empl_frgnr_yn = employee_info.get('empl_frgnr_yn') or None
+        hrm_empl_empl_telno = employee_info.get('empl_telno') or None
+        hrm_empl_empl_mobile_no = employee_info.get('empl_mobile_no') or None
+        hrm_empl_empl_retire_date = employee_info.get(
+            'empl_retire_date') or None
+        hrm_empl_empl_salary_form = employee_info.get(
+            'empl_salary_form') or None
+        hrm_empl_empl_ssid = employee_info.get('empl_ssid') or None
+        hrm_empl_empl_email = employee_info.get('empl_email') or None
+        hrm_empl_empl_emplyn_form = employee_info.get(
+            'empl_emplyn_form') or None
+        hrm_empl_empl_mrig_anvsry = employee_info.get(
+            'empl_mrig_anvsry') or None
+        hrm_empl_empl_ssid_addr = employee_info.get('empl_ssid_addr') or None
+        hrm_empl_empl_rlsdnc_addr = employee_info.get(
+            'empl_rlsdnc_addr') or None
+        hrm_empl_empl_encpnd = employee_info.get('empl_encpnd') or None
+        hrm_empl_empl_upt_dtime = now.strftime('%Y-%m-%d %H:%M:%S') or None
+        hrm_empl_empl_upt_id = login_info.get('login_id')
 
         # HRM_ATEND 테이블
-        # empl_no_atend = '1' #필요없음
-        corp_no_atend = '1'  # 세션처리예정
-        dept_no_atend = employee_info.get('dept_no')  # 세션처리예정
-        base_attendtime_atend = attend_info.get('base_attendtime')
-        base_lvofctime_atend = attend_info.get('base_lvofctime')
-        mdwk_workday_atend = attend_info.get('mdwk_workday')
-        whday_atend = attend_info.get('whday')
-        crtlwh_atend = attend_info.get('crtlwh')
-        upt_dtime_atend = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_atend = '운영자'  # 세션처리예정
-
+        hrm_atend_base_attendtime = attend_info.get('base_attendtime') or None
+        hrm_atend_base_lvofctime = attend_info.get('base_lvofctime') or None
+        hrm_atend_mdwk_workday = attend_info.get('mdwk_workday') or None
+        hrm_atend_whday = attend_info.get('whday') or None
+        hrm_atend_crtlwh = attend_info.get('crtlwh') or None
+        hrm_atend_upt_dtime = now.strftime('%Y-%m-%d %H:%M:%S') or None
+        hrm_atend_upt_id = login_info.get('login_id')
         # HRM_SALARY 테이블
-        # empl_no_salary = '1' #필요없음
-        corp_no_salary = '1'  # 세션처리예정
-        dept_no_salary = employee_info.get('dept_no')  # 세션처리예정
-        base_salary_salary = salary_info.get('base_salary')
-        trn_bank_salary = salary_info.get('trn_bank')
-        acc_no_salary = salary_info.get('acc_no')
-        npn_pay_yn_salary = salary_info.get('npn_pay_yn')
-        npn_mrmrtn_salary = salary_info.get('npn_mrmrtn')
-        hlthins_pay_yn_salary = salary_info.get('hlthins_pay_yn')
-        hlthins_mrmrtn_salary = salary_info.get('hlthins_mrmrtn')
-        empins_pay_yn_salary = salary_info.get('empins_pay_yn')
-        rperins_pay_yn = salary_info.get('rperins_pay_yn')
-        wthtx_taxrt = salary_info.get('wthtx_taxrt')
-        upt_dtime_salary = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_salary = '운영자'  # 세션처리예정
+        hrm_salary_base_salary = salary_info.get('base_salary') or None
+        hrm_salary_trn_bank = salary_info.get('trn_bank') or None
+        hrm_salary_acc_no = salary_info.get('acc_no') or None
+        hrm_salary_npn_pay_yn = salary_info.get('npn_pay_yn') or None
+        hrm_salary_npn_mrmrtn = salary_info.get('npn_mrmrtn') or None
+        hrm_salary_hlthins_pay_yn = salary_info.get('hlthins_pay_yn') or None
+        hrm_salary_hlthins_mrmrtn = salary_info.get('hlthins_mrmrtn') or None
+        hrm_salary_empins_pay_yn = salary_info.get('empins_pay_yn') or None
+        hrm_salary_rperins_pay_yn = salary_info.get('rperins_pay_yn') or None
+        hrm_salary_wthtx_taxrt = salary_info.get('wthtx_taxrt')  # 미완성
+        hrm_salary_upt_dtime = now.strftime('%Y-%m-%d %H:%M:%S') or None
+        hrm_salary_upt_id = login_info.get('login_id')
 
         # HRM_FRGNR 테이블
-        empl_no_frgnr = '1'  # 세션처리예정
-        corp_no_frgnr = '1'  # 세션처리예정
-        dept_no_frgnr = employee_info.get('dept_no')  # 세션처리예정
-        dtrmcexp_date_frgnr = frgnr_info.get('dtrmcexp_date')
-        dtrmcexp_icny_frgnr = frgnr_info.get('dtrmcexp_icny')
-        dtrmcexp_insrnc_amt_frgnr = frgnr_info.get('dtrmcexp_insrnc_amt')
-        remark_frgnr = ''
-        upt_dtime_frgnr = now.strftime('%Y-%m-%d %H:%M:%S')
-        upt_id_frgnr = '운영자'  # 세션처리예정
+        hrm_frgnr_dtrmcexp_date = frgnr_info.get('dtrmcexp_date') or None
+        hrm_frgnr_dtrmcexp_icny = frgnr_info.get('dtrmcexp_icny') or None
+        hrm_frgnr_dtrmcexp_insrnc_amt = frgnr_info.get(
+            'dtrmcexp_insrnc_amt') or None
+        hrm_frgnr_remark = frgnr_info.get('remark') or None
+        hrm_frgnr_upt_dtime = now.strftime('%Y-%m-%d %H:%M:%S') or None
+        hrm_frgnr_upt_id = login_info.get('login_id')
 
-        corp_no = 1
-        empl_no = employee_info.get('empl_no')  # 사원번호
         try:
             # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 수정
             with transaction.atomic():
                 with connection.cursor() as cursor:
                     # 외래키 제약조건 비활성화
-                    cursor.execute("SET FOREIGN_KEY_CHECKS=0")
+                    # cursor.execute("SET FOREIGN_KEY_CHECKS=0")
 
                     sql_query = """
-                                        UPDATE HRM_EMPL 
-                                        SET CORP_NO = %s, DEPT_NO = %s, EMPL_NM = %s, SSID = %s, GENDER = %s, BRTHDY = %s, LSCLD = %s, MRIG_YN = %s, MRIG_ANVSRY = %s,
-                                            TEL_NO = %s, MOBILE_NO = %s, SSID_ADDR = %s, RLRSDNC_ADDR = %s, EMAIL = %s, PRSL_EMAIL = %s, EXCTV_YN = %s, OFCPS = %s,
-                                            EMPLYM_FORM = %s, SALARY_FORM = %s, ENCPND = %s, HFFC_STATE = %s, RETIRE_DATE = %s, FRGNR_YN = %s,
-                                            REG_ID = %s, UPT_DTIME = %s, UPT_ID = %s 
-                                        WHERE EMPL_NO = %s
+                                        UPDATE HRM_EMPL
+                                        SET DEPT_NO = %s, OFCPS = %s, EMPL_NM = %s, GENDER = %s, MRIG_YN = %s, PRSL_EMAIL = %s, BRTHDY = %s, LSCLD = %s, HFFC_STATE = %s, EXCTV_YN = %s, PHOTO_ID = %s,
+                                        FRGNR_YN = %s, TEL_NO = %s, MOBILE_NO = %s, RETIRE_DATE = %s, SALARY_FORM = %s, SSID = %s, EMAIL = %s, EMPLYM_FORM = %s, MRIG_ANVSRY = %s, SSID_ADDR = %s,
+                                        RLRSDNC_ADDR = %s, ENCPND = %s, UPT_DTIME = %s, UPT_ID = %s
+                                        WHERE CORP_NO = %s AND EMPL_NO = %s
                                     """
                     cursor.execute(sql_query, [
-                        corp_no_empl, dept_no_empl, empl_nm_empl, ssid_empl, gender_empl, brthdy_empl, lunisolar_empl, mrig_yn_empl, mrig_anvsry_empl,
-                        tel_no_empl, mobile_no_empl, ssid_addr_empl, rlsdnc_addr_empl, email_empl, prsl_email_empl, exctv_yn_empl, rspofc_empl,
-                        emplym_form_empl, salary_form_empl, encpnd_empl, hffc_state_empl, retire_date_empl, frgnr_yn_empl,
-                        reg_id_empl, upt_dtime_empl, upt_id_empl, empl_no
+                        hrm_empl_dept_no, hrm_empl_empl_rspofc, hrm_empl_empl_nm, hrm_empl_empl_gender, hrm_empl_empl_mrig_yn, hrm_empl_empl_prsl_email, hrm_empl_empl_brthdy, hrm_empl_empl_lscld, hrm_empl_empl_hffc_state, hrm_empl_empl_exctv_yn, hrm_empl_empl_photoid,
+                        hrm_empl_empl_frgnr_yn, hrm_empl_empl_telno, hrm_empl_empl_mobile_no, hrm_empl_empl_retire_date, hrm_empl_empl_salary_form, hrm_empl_empl_ssid, hrm_empl_empl_email, hrm_empl_empl_emplyn_form,
+                        hrm_empl_empl_mrig_anvsry, hrm_empl_empl_ssid_addr, hrm_empl_empl_rlsdnc_addr, hrm_empl_empl_encpnd, hrm_empl_empl_upt_dtime, hrm_empl_empl_upt_id, hrm_empl_corp_no, hrm_empl_empl_no
                     ])
 
                     sql_query_atend = """
                                         UPDATE HRM_ATEND
-                                        SET CORP_NO = %s, DEPT_NO = %s, BASE_ATENDTIME = %s, BASE_LVOFCTIME = %s, MDWK_WORKDAY = %s, 
-                                            WHDAY = %s, CRTLWH = %s, UPT_DTIME = %s, UPT_ID = %s 
-                                        WHERE EMPL_NO = %s
+                                        SET DEPT_NO = %s, BASE_ATENDTIME = %s, BASE_LVOFCTIME = %s, MDWK_WORKDAY = %s, WHDAY = %s, CRTLWH = %s, UPT_DTIME = %s, UPT_ID = %s
+                                        WHERE CORP_NO = %s AND EMPL_NO = %s
                                         """
                     cursor.execute(sql_query_atend, [
-                        corp_no_atend, dept_no_atend, base_attendtime_atend,
-                        base_lvofctime_atend, mdwk_workday_atend, whday_atend, crtlwh_atend, upt_dtime_atend, upt_id_atend, empl_no
+                        hrm_empl_dept_no, hrm_atend_base_attendtime, hrm_atend_base_lvofctime, hrm_atend_mdwk_workday, hrm_atend_whday, hrm_atend_crtlwh, hrm_atend_upt_dtime, hrm_atend_upt_id, hrm_empl_corp_no, hrm_empl_empl_no
                     ])
 
                     sql_query_salary = """
                                         UPDATE HRM_SALARY
-                                        SET CORP_NO = %s, DEPT_NO = %s, BASE_SALARY = %s, TRN_BANK = %s, ACC_NO = %s, NPN_PAY_YN = %s, NPN_MRMRTN = %s,
-                                            HLTHINS_PAY_YN = %s, HLTHINS_MRMRTN = %s, EMPINS_PAY_YN = %s, RPERINS_PAY_YN = %s, WTHTX_TAXRT = %s, UPT_DTIME = %s, UPT_ID = %s
-                                        WHERE EMPL_NO = %s
+                                        SET DEPT_NO = %s, BASE_SALARY = %s, TRN_BANK = %s, ACC_NO = %s, NPN_PAY_YN = %s, NPN_MRMRTN = %s, HLTHINS_PAY_YN = %s,
+                                        HLTHINS_MRMRTN = %s, EMPINS_PAY_YN = %s, RPERINS_PAY_YN = %s, UPT_DTIME = %s, UPT_ID = %s
+                                        WHERE CORP_NO = %s AND EMPL_NO = %s
                                             """
                     cursor.execute(sql_query_salary, [
-                        corp_no_salary, dept_no_salary, base_salary_salary, trn_bank_salary, acc_no_salary,
-                        npn_pay_yn_salary, npn_mrmrtn_salary, hlthins_pay_yn_salary, hlthins_mrmrtn_salary, empins_pay_yn_salary,
-                        rperins_pay_yn, wthtx_taxrt, upt_dtime_salary, upt_id_salary, empl_no
+                        hrm_empl_dept_no, hrm_salary_base_salary, hrm_salary_trn_bank, hrm_salary_acc_no, hrm_salary_npn_pay_yn, hrm_salary_npn_mrmrtn, hrm_salary_hlthins_pay_yn,
+                        hrm_salary_hlthins_mrmrtn, hrm_salary_empins_pay_yn, hrm_salary_rperins_pay_yn, hrm_salary_upt_dtime, hrm_salary_upt_id, hrm_empl_corp_no, hrm_empl_empl_no
                     ])
+                    if hrm_empl_empl_frgnr_yn == 'Y':
 
-                    sql_query_frgnr = """
-                                            UPDATE HRM_FRGNR
-                                            SET CORP_NO = %s, DEPT_NO = %s, DTRMCEXP_DATE = %s, DTRMCEXP_ICNY = %s, 
-                                                DTRMCEXP_INSRNC_AMT = %s, REMARK = %s, UPT_DTIME = %s, UPT_ID = %s
-                                            WHERE EMPL_NO = %s
-                                            """
-                    cursor.execute(sql_query_frgnr, [
-                        corp_no_frgnr, dept_no_frgnr, dtrmcexp_date_frgnr,
-                        dtrmcexp_icny_frgnr, dtrmcexp_insrnc_amt_frgnr, remark_frgnr, upt_dtime_frgnr, upt_id_frgnr, empl_no_frgnr
-                    ])
+                        sql_query_frgnr = """
+                                                UPDATE HRM_FRGNR
+                                                SET DEPT_NO = %s, DCEXP_DATE = %s, DCEXP_ICNY = %s, DCEXP_INSRNC_AMT = %s, REMARK = %s, UPT_DTIME = %s, UPT_ID = %s
+                                                WHERE CORP_NO = %s AND EMPL_NO = %s
+                                                """
+                        cursor.execute(sql_query_frgnr, [
+                            hrm_empl_dept_no, hrm_frgnr_dtrmcexp_date, hrm_frgnr_dtrmcexp_icny, hrm_frgnr_dtrmcexp_insrnc_amt, hrm_frgnr_remark, hrm_frgnr_upt_dtime, hrm_frgnr_upt_id, hrm_empl_corp_no, hrm_empl_empl_no
+                        ])
                     # 외래키 제약조건 활성화
-                    cursor.execute("SET FOREIGN_KEY_CHECKS=1")
+                    # cursor.execute("SET FOREIGN_KEY_CHECKS=1")
 
             return Response({"message": "Data updated successfully"}, status=status.HTTP_201_CREATED)
 
