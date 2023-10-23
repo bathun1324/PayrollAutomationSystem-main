@@ -43,7 +43,7 @@ class PayrollAPIView(APIView):
                 "dept_nm": row[30],  # 부서명
                 "empl_no": row[2],  # 사원번호
                 "empl_nm": row[4],  # 사원명
-                "empl_rspofc": row[5],  # 직책
+                "empl_rspofc": row[5],  # 직위
                 "empl_encpnd": row[28],  # 입사일자
                 "empl_salary_form": row[20],  # 급여종류
             }

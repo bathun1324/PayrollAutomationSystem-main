@@ -95,7 +95,7 @@ class CorporationInfoAPISearch(APIView):
             """
             
         if start_date and start_date != 'undefined' and end_date and end_date != 'undefined':
-            sql_query += " AND CNTRCT_DATE > %s AND CNTRCT_DATE < %s "
+            sql_query += " AND CNTRCT_DATE >= %s AND CNTRCT_DATE <= %s "
             values.append(start_date)
             values.append(end_date)
             
@@ -256,7 +256,7 @@ class CorporationAPIPost(APIView):
                     max_num = cursor.fetchone()[0]
                     
                     cursor.execute(
-                        "SELECT IF (MAX(CAST(EMPL_NO AS UNSIGNED)) IS NULL, 1, MAX(CAST(EMPL_NO AS UNSIGNED))+1) FROM HRM_EMPL WHERE CORP_NO = %s", [corp_no_empl])
+                        "SELECT IF (MAX(CAST(EMPL_NO AS UNSIGNED)) IS NULL, 1, MAX(CAST(EMPL_NO AS UNSIGNED))+1) FROM HRM_EMPL WHERE CORP_NO = %s", [max_num])
                     empl_max_num = cursor.fetchone()[0]
                     
                     cursor.execute(
@@ -273,7 +273,7 @@ class CorporationAPIPost(APIView):
                                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                                 """
                     cursor.execute(sql_query, [
-                        max_num, corp_nm_empl, repre_nm_empl, repre_telno_empl, bizm_no_empl, addr_empl, empl_num_empl, mngr_nm_empl, ofcps_empl, corp_telno_empl, email_empl, mobile_no_empl, mngr_id_empl, dept_info, ofcps_info, atend_info, salary_info, logo_id, remark, gen1, gen2, upt1, upt2
+                        max_num, corp_nm_empl, repre_nm_empl, bizm_no_empl, repre_telno_empl, addr_empl, empl_num_empl, mngr_nm_empl, ofcps_empl, corp_telno_empl, email_empl, mobile_no_empl, mngr_id_empl, dept_info, ofcps_info, atend_info, salary_info, logo_id, remark, gen1, gen2, upt1, upt2
                     ])
 
                     sql_query_cntrct = """
@@ -423,7 +423,7 @@ class CorporationAPIUpdate(APIView):
                                     WHERE CORP_NO = %s
                                 """
                     cursor.execute(sql_query, [
-                        corp_nm_empl, repre_nm_empl, repre_telno_empl, bizm_no_empl, addr_empl, empl_num_empl, mngr_nm_empl, ofcps_empl, corp_telno_empl, email_empl, mobile_no_empl, mngr_id_empl, dept_info, ofcps_info, atend_info, salary_info, logo_id, remark, upt1, upt2, corp_no_empl
+                        corp_nm_empl, repre_nm_empl, bizm_no_empl, repre_telno_empl, addr_empl, empl_num_empl, mngr_nm_empl, ofcps_empl, corp_telno_empl, email_empl, mobile_no_empl, mngr_id_empl, dept_info, ofcps_info, atend_info, salary_info, logo_id, remark, upt1, upt2, corp_no_empl
                     ])
 
                     sql_query_cntrct = """
