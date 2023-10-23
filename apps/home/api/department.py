@@ -17,34 +17,39 @@ from apps.home.serializers import *
 from datetime import datetime
 
 # @login_required(login_url="/login/")
+
+
 class DepartmentAPIView(APIView):
     def get(self, request):
-        departments = BimDept.objects.all()
+        corp_no = request.GET.get('corp_no', None)
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM BIM_DEPT WHERE CORP_NO = %s", [corp_no])
+
         serialized_departments = []
-        
-        for dept in departments:
-            state = "사용" if dept.state == "1" else "미사용"
+
+        for row in cursor.fetchall():
             serialized_dept = {
-                "no": dept.corp_no,
-                "id": dept.dept_no,
-                "name": dept.dept_nm,
-                "state": state,
-                "reg_dtime": dept.reg_dtime,
-                "reg_id": dept.reg_id,
-                "upt_dtime": dept.upt_dtime,
-                "upt_id": dept.upt_id
+                "no": row[0],
+                "id": row[1],
+                "name": row[2],
+                "state": row[3],
+                "reg_dtime": row[4],
+                "reg_id": row[5],
+                "upt_dtime": row[6],
+                "upt_id": row[7]
             }
             serialized_departments.append(serialized_dept)
-        
+
         return JsonResponse(serialized_departments, safe=False)
-    
+
+
 class DepartmentAPISearch(APIView):
     def get(self, request):
         dept_id = request.GET.get('department_id', None)
-        
-        departments = BimDept.objects.filter(dept_no = dept_id)
+
+        departments = BimDept.objects.filter(dept_no=dept_id)
         serialized_departments = []
-        
+
         for dept in departments:
             state = "사용" if dept.state == "1" else "미사용"
             corp_instance = ComCorp.objects.get(pk=dept.corp_no.pk)
@@ -60,65 +65,69 @@ class DepartmentAPISearch(APIView):
                 "upt_id": dept.upt_id
             }
             serialized_departments.append(serialized_dept)
-        
+
         return JsonResponse(serialized_departments, safe=False)
-        
+
+
 class DepartmentAPIPost(APIView):
-    
+
     def post(self, request):
         # POST 요청에서 전달된 데이터 가져오기
-            data = request.data
-            now = datetime.now()
-            
-            corp_no = '1'
-            dept_name = data.get('deptName')
-            dept_status = data.get('status')
-            reg_date = '2023-01-10'
-            reg_id = data.get('regId')
-            mod_date = '2023-01-10'
-            mod_id = data.get('modId')
+        data = request.data
+        now = datetime.now()
+
+        corp_no = '1'
+        dept_name = data.get('deptName')
+        dept_status = data.get('status')
+        reg_date = '2023-01-10'
+        reg_id = data.get('regId')
+        mod_date = '2023-01-10'
+        mod_id = data.get('modId')
+
+        try:
+            # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT MAX(DEPT_NO) FROM BIM_DEPT WHERE CORP_NO = %s", [corp_no])
+                max_dept_no = cursor.fetchone()[0]
+                new_dept_no = (max_dept_no or 0) + 1
+
+                sql_query = """
+                    INSERT INTO BIM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                cursor.execute(sql_query, [
+                               corp_no, new_dept_no, dept_name, dept_status, reg_date, reg_id, mod_date, mod_id])
+
+            return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentAPIDelete(APIView):
+
+    def post(self, request):
+        # POST 요청에서 전달된 데이터 가져오기
+        data_array = request.data
+
+        corp_no = '1'
+
+        for data in data_array:
+            dept_no = data
+            print("여기")
+            print(dept_no)
 
             try:
                 # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
                 with connection.cursor() as cursor:
-                    cursor.execute("SELECT MAX(DEPT_NO) FROM BIM_DEPT WHERE CORP_NO = %s", [corp_no])
-                    max_dept_no = cursor.fetchone()[0]
-                    new_dept_no = (max_dept_no or 0) + 1
-                    
-                    sql_query = """
-                    INSERT INTO BIM_DEPT (CORP_NO, DEPT_NO, DEPT_NM, STATE, REG_DTIME, REG_ID, UPT_DTIME, UPT_ID)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    """
-                    cursor.execute(sql_query, [corp_no, new_dept_no, dept_name, dept_status, reg_date, reg_id, mod_date, mod_id])
 
-                return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
+                    sql_query = """
+                        UPDATE BIM_DEPT SET state = '2' WHERE dept_no = %s AND corp_no = %s
+                        """
+                    cursor.execute(sql_query, [dept_no, corp_no])
 
             except Exception as e:
                 return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
-            
-class DepartmentAPIDelete(APIView):
-    
-    def post(self, request):
-        # POST 요청에서 전달된 데이터 가져오기
-            data_array = request.data
-            
-            corp_no = '1'
-            
-            for data in data_array:
-                dept_no = data
-                print("여기")
-                print(dept_no)
 
-                try:
-                    # 직접 SQL 문 사용하여 데이터베이스에 부서 정보 등록
-                    with connection.cursor() as cursor:
-                        
-                        sql_query = """
-                        UPDATE BIM_DEPT SET state = '2' WHERE dept_no = %s AND corp_no = %s
-                        """
-                        cursor.execute(sql_query, [dept_no, corp_no])
-
-                except Exception as e:
-                    return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            return Response({"message": "Data delete successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Data delete successfully"}, status=status.HTTP_201_CREATED)
