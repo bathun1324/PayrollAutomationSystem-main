@@ -215,7 +215,7 @@ class CorporationAPIPost(APIView):
         #logo_id = corporation_info.get('logo_id')
         logo_id = '1'
         #remark = corporation_info.get('remark')
-        remark = '1'
+        remark = corporation_info.get('remark')
         gen1 = now.strftime('%Y-%m-%d %H:%M:%S')
         gen2 = corporation_info.get('gen2')
         upt1 = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -226,14 +226,14 @@ class CorporationAPIPost(APIView):
         # empl_no_atend = '1' #필요없음
         corp_no_cntrct = corporation_info.get('corp_no')  # 세션처리예정
         cntrct_form = corporation_info.get('cntrct_form')  # 세션처리예정
-        state = cntrct_info.get('state')
-        cntrct_date = cntrct_info.get('cntcrt_date')
-        exp_date = cntrct_info.get('exp_date')
-        pmt_date = cntrct_info.get('pmt_date')
-        ter_date = cntrct_info.get('ter_date')
-        tml_use_yn = cntrct_info.get('tml_use_yn')
-        exp_date = cntrct_info.get('exp_date')
-        mtyvc_stl_std = cntrct_info.get('mtyvc_stl_std')
+        state = corporation_info.get('state')
+        cntrct_date = corporation_info.get('cntcrt_date')
+        exp_date = corporation_info.get('exp_date')
+        pmt_date = corporation_info.get('pmt_date')
+        ter_date = corporation_info.get('ter_date')
+        tml_use_yn = corporation_info.get('tml_use_yn')
+        exp_date = corporation_info.get('exp_date')
+        mtyvc_stl_std = corporation_info.get('mtyvc_stl_std')
 
         corp_no = 1
         dept_count = 1001
