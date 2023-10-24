@@ -22,21 +22,23 @@ from datetime import datetime
 class DepartmentAPIView(APIView):
     def get(self, request):
         corp_no = request.GET.get('corp_no', None)
+        values = []
+        sql_query = """
+            SELECT DISTINCT(DEPT_NM), DEPT_NO FROM BIM_DEPT WHERE 1=1
+        """
+        if corp_no and corp_no != 'undefined':
+            sql_query += " AND CORP_NO = %s"
+            values.append(corp_no)
+
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM BIM_DEPT WHERE CORP_NO = %s", [corp_no])
+        cursor.execute(sql_query, values)
 
         serialized_departments = []
 
         for row in cursor.fetchall():
             serialized_dept = {
-                "no": row[0],
                 "id": row[1],
-                "name": row[2],
-                "state": row[3],
-                "reg_dtime": row[4],
-                "reg_id": row[5],
-                "upt_dtime": row[6],
-                "upt_id": row[7]
+                "name": row[0],
             }
             serialized_departments.append(serialized_dept)
 
