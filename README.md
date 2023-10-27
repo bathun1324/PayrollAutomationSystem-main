@@ -74,6 +74,6 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-the app runs at `http://127.0.0.1:8000/`
+the app runs at `http://13.125.117.184:8000/`
 
 <br />

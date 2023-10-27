@@ -23,10 +23,14 @@ logger = logging.getLogger(__name__)
 
 class CommuteManageAPIView(APIView):
     def get(self, request):
+        
         sql_query = """
-        SELECT *
-        FROM HRM_EMPL empl, ATM_DALY daly, BIM_DEPT dept
-        WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO ORDER BY ATEND_TIME DESC
+        SELECT * FROM ATM_DALY daly
+        INNER JOIN HRM_EMPL empl
+        ON empl.EMPL_NO = daly.EMPL_NO
+        INNER JOIN BIM_DEPT dept
+        ON dept.DEPT_NO = daly.DEPT_NO AND daly.CORP_NO = dept.CORP_NO
+        WHERE CURDATE() = daly.WORK_DATE
         """
 
         # SQL 쿼리 실행
@@ -77,13 +81,16 @@ class CommuteManageAPISearch(APIView):
         values = []
 
         sql_query = """
-            SELECT *
-            FROM HRM_EMPL empl, ATM_DALY daly, BIM_DEPT dept
-            WHERE empl.EMPL_NO = daly.EMPL_NO AND empl.DEPT_NO = dept.DEPT_NO
+                    SELECT * FROM ATM_DALY daly
+                    INNER JOIN HRM_EMPL empl
+                    ON empl.EMPL_NO = daly.EMPL_NO
+                    INNER JOIN BIM_DEPT dept
+                    ON dept.DEPT_NO = daly.DEPT_NO AND daly.CORP_NO = dept.CORP_NO
+                    WHERE 1=1 
             """
             
         if start_date and start_date != 'undefined' and end_date and end_date != 'undefined':
-            sql_query += " AND ATEND_TIME > %s AND ATEND_TIME < %s "
+            sql_query += " AND WORK_DATE >= %s AND WORK_DATE <= %s "
             values.append(start_date)
             values.append(end_date)
             
