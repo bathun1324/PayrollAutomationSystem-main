@@ -20,7 +20,9 @@ env = environ.Env(
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#CONFIG_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONFIG_DIR = os.path.join(BASE_DIR, 'config')
+LOG_DIR = os.getenv('LOG_ROOT', os.path.join(BASE_DIR, 'logs'))
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -186,3 +188,88 @@ CORS_ORIGIN_WHITELIST = [
     'http://13.125.117.184:8081',
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# Log file 
+#   DEBUG < INFO < WARNING < ERROR < CRITICAL 순서
+#   1단계 DEBUG: 디버깅 목적으로 사용
+#   2단계 INFO: 일반 정보를 출력할 목적으로 사용
+#   3단계 WARNING: 경고 정보를 출력할 목적으로(작은 문제) 사용
+#   4단계 ERROR: 오류 정보를 출력할 목적으로(큰 문제) 사용
+#   5단계 CRITICAL: 아주 심각한 문제를 출력할 목적으로 사용
+#
+#   사용법:
+#       import logging
+#       log = logging.getLogger('pas')
+#       log.info("INFO 레벨로 출력")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+        'standard': {
+            'format': '%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'encoding': 'utf-8',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'pas_app.log'),
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 10,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'pas': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+        },
+    }
+}
+
+if DEBUG:
+    # Debug(development) Mode
+    LOGGING['loggers']['pas']['handlers'] = ['console']
+else:
+    # Release(production) Mode
+    LOGGING['loggers']['pas']['handlers'] = ['file']

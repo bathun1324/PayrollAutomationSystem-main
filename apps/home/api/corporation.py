@@ -18,13 +18,14 @@ from apps.home.serializers import *
 from datetime import datetime
 import logging
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger('pas')
 
 class CorporationInfoAPIView(APIView):
     def get(self, request):
+        log.info("== [get]: CorporationInfoAPIView ==")
         
         cmpy_detail = request.GET.get('cmpy_detail', None)
-        print(cmpy_detail)
+        # print(cmpy_detail)
         
         if(cmpy_detail):
             sql_query = """
@@ -34,7 +35,7 @@ class CorporationInfoAPIView(APIView):
             sql_query = """
             SELECT * FROM COM_CORP a, COM_CNTRCT b WHERE a.CORP_NO = b.CORP_NO 
             """
-        
+        log.debug(f"{cmpy_detail=}, {sql_query=}")
 
 
         # SQL 쿼리 실행
@@ -73,13 +74,16 @@ class CorporationInfoAPIView(APIView):
                 "mtyvc_stl_std": row[30],
                 "tml_use_yn": row[31],
             }
-            print(serialized_empl)
+            # print(serialized_empl)
+            log.debug(f"{serialized_empl=}")
             serialized_employees.append(serialized_empl)
 
         return JsonResponse(serialized_employees, safe=False)
     
 class CorporationInfoAPISearch(APIView):
     def get(self, request):
+        log.info("== [get]: CorporationInfoAPISearch ==")
+        
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
         corp_nm = request.GET.get('corp_nm', None)
@@ -137,7 +141,8 @@ class CorporationInfoAPISearch(APIView):
     
 class CorporationDetailInfoAPIView(APIView):
     def get(self, request):
-
+        log.info("== [get]: CorporationDetailInfoAPIView ==")
+        
         cmpy_detail = request.GET.get('cmpy_detail', None)
 
         cursor = connection.cursor()
@@ -184,6 +189,8 @@ class CorporationDetailInfoAPIView(APIView):
     
 class CorporationAPIPost(APIView):
     def post(self, request):
+        log.info("== [post]: CorporationAPIPost ==")
+        
         # POST 요청에서 전달된 데이터 가져오기
         data = request.data
         now = datetime.now()
@@ -356,12 +363,15 @@ class CorporationAPIPost(APIView):
             return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            logger.error(e)
+            # logger.error(e)
+            log.exception(f"Login Exception : {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
 
 class CorporationAPIUpdate(APIView):
     def post(self, request):
+        log.info("== [post]: CorporationAPIUpdate ==")
+        
         # POST 요청에서 전달된 데이터 가져오기
         data = request.data
         now = datetime.now()
@@ -438,13 +448,15 @@ class CorporationAPIUpdate(APIView):
             return Response({"message": "Data inserted successfully"}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            logger.error(e)
+            # logger.error(e)
+            log.exception(f"Login Exception : {e}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
 
 class CorporationGetInfo(APIView):
     def get(self, request):
-
+        log.info("== [get]: CorporationGetInfo ==")
+        
         sql_query = """
         SELECT * FROM CMM_CODE WHERE LCODE = '0013' AND SCODE > '0000' AND SCODE < '0010' 
         """         
@@ -470,7 +482,8 @@ class CorporationGetInfo(APIView):
     
 class CorporationGetOfcps(APIView):
     def get(self, request):
-
+        log.info("== [get]: CorporationGetOfcps ==")
+        
         sql_query = """
         SELECT * FROM CMM_CODE WHERE LCODE = 0002 AND SCODE > 0001 AND SCODE < 0010
         """         
