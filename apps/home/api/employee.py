@@ -23,20 +23,32 @@ logger = logging.getLogger(__name__)
 
 class EmployeeAPIView(APIView):
     def get(self, request):
+        corp_no = request.GET.get('corp_no', None)
+        values = []
         sql_query = """
         SELECT empl.*, dept.DEPT_NM, ofcps.OFCPS_NM,
         CASE 
             WHEN empl.LSCLD = 1 THEN '양력'
             WHEN empl.LSCLD = 2 THEN '음력'
-            ELSE '다시입력'
+            ELSE ' '
         END AS LSCLD_NM,
         CASE 
             WHEN empl.HFFC_STATE = 1 THEN '재직'
             WHEN empl.HFFC_STATE = 2 THEN '퇴사'
-            ELSE '다시입력'
+            ELSE ' '
         END AS HFFC_STATE_NM,
         code.CD_VAL SALARY,
-        sel.CD_VAL EMPLYM
+        sel.CD_VAL EMPLYM,
+        CASE 
+            WHEN empl.FRGNR_YN  = 'N' THEN '내국인'
+            WHEN empl.FRGNR_YN = 'Y' THEN '외국인'
+            ELSE ' '
+        END AS FRGNR_VAL,
+        CASE 
+            WHEN empl.GENDER = 'M' THEN '남자'
+            WHEN empl.GENDER = 'F' THEN '여자'
+            ELSE ' '
+        END AS GENDER_VAL
         FROM HRM_EMPL empl
         JOIN BIM_OFCPS ofcps
         on empl.CORP_NO = ofcps.CORP_NO AND empl.OFCPS = ofcps.OFCPS
@@ -50,11 +62,17 @@ class EmployeeAPIView(APIView):
         WHERE cc.LCODE = '0010' AND cc.SCODE = he.EMPLYM_FORM
         ) sel
         ON sel.EMPL_NO = empl.EMPL_NO
-        ORDER BY CAST(empl.EMPL_NO AS UNSIGNED)
+        WHERE 1=1
         """
+        if corp_no and corp_no != 'undefined':
+            sql_query += " AND empl.CORP_NO = %s "
+            values.append(corp_no)
+
+        sql_query += " ORDER BY CAST(empl.EMPL_NO AS UNSIGNED) "
+
         # SQL 쿼리 실행
         cursor = connection.cursor()
-        cursor.execute(sql_query)
+        cursor.execute(sql_query, values)
 
         serialized_employees = []
         #
@@ -90,6 +108,8 @@ class EmployeeAPIView(APIView):
                 "empl_reg_id": row[26],  # 등록자
                 "empl_upt_dtime": row[27],  # 수정일시
                 "empl_upt_id": row[28],  # 수정자
+                "empl_frgnr_val": row[35],  # 내외국인 값
+                "empl_gender_val": row[36],  # 성별 값
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
@@ -105,10 +125,45 @@ class EmployeeAPIViewSearch(APIView):
         empl_frgnr_yn = request.GET.get('foreigner', None)
         empl_emplym_form = request.GET.get('employmentType', None)
         empl_hffc_state = request.GET.get('employmentStatus', None)
+        corp_no = request.GET.get('corp_no', None)
 
         sql_query = """
-        SELECT *
-        FROM HRM_EMPL
+        SELECT empl.*, dept.DEPT_NM, ofcps.OFCPS_NM,
+        CASE 
+            WHEN empl.LSCLD = 1 THEN '양력'
+            WHEN empl.LSCLD = 2 THEN '음력'
+            ELSE ' '
+        END AS LSCLD_NM,
+        CASE 
+            WHEN empl.HFFC_STATE = 1 THEN '재직'
+            WHEN empl.HFFC_STATE = 2 THEN '퇴사'
+            ELSE ' '
+        END AS HFFC_STATE_NM,
+        code.CD_VAL SALARY,
+        sel.CD_VAL EMPLYM,
+        CASE 
+            WHEN empl.FRGNR_YN  = 'N' THEN '내국인'
+            WHEN empl.FRGNR_YN = 'Y' THEN '외국인'
+            ELSE ' '
+        END AS FRGNR_VAL,
+        CASE 
+            WHEN empl.GENDER = 'M' THEN '남자'
+            WHEN empl.GENDER = 'F' THEN '여자'
+            ELSE ' '
+        END AS GENDER_VAL
+        FROM HRM_EMPL empl
+        JOIN BIM_OFCPS ofcps
+        on empl.CORP_NO = ofcps.CORP_NO AND empl.OFCPS = ofcps.OFCPS
+        JOIN BIM_DEPT dept
+        on empl.CORP_NO = dept.CORP_NO AND empl.DEPT_NO = dept.DEPT_NO
+        JOIN CMM_CODE code
+        on code.LCODE = '0008' AND code.SCODE = empl.SALARY_FORM
+        JOIN (
+        SELECT cc.CD_VAL, he.EMPL_NO AS EMPL_NO
+        FROM HRM_EMPL he, CMM_CODE cc
+        WHERE cc.LCODE = '0010' AND cc.SCODE = he.EMPLYM_FORM
+        ) sel
+        ON sel.EMPL_NO = empl.EMPL_NO
         WHERE 1=1
         """
 
@@ -134,6 +189,12 @@ class EmployeeAPIViewSearch(APIView):
             sql_query += " AND empl.HFFC_STATE = %s "
             values.append(empl_hffc_state)
 
+        if corp_no and corp_no != 'undefined':
+            sql_query += " AND empl.CORP_NO = %s "
+            values.append(corp_no)
+
+        sql_query += " ORDER BY CAST(empl.EMPL_NO AS UNSIGNED) "
+
         # SQL 쿼리 실행
         cursor = connection.cursor()
         cursor.execute(sql_query, values)
@@ -146,24 +207,24 @@ class EmployeeAPIViewSearch(APIView):
                 "dept_no": row[1],  # 부서번호
                 "dept_nm": row[29],  # 부서이름
                 "empl_no": row[2],  # 사원번호
-                "empl_rspofc": row[3],  # 직위(1001)
+                "empl_rspofc": row[30],  # 직위
                 "empl_nm": row[4],  # 사원명
-                "empl_gender": row[5],  # 성별(M/F)
-                "empl_mrig_yn": row[6],  # 결혼여부(Y/N)
+                "empl_gender": row[5],  # 성별
+                "empl_mrig_yn": row[6],  # 결혼여부
                 "empl_prsl_email": row[7],  # 개인이메일
                 "empl_brthdy": row[8],  # 생년월일
-                "empl_lscld": row[9],  # 양음력(1, 2)
-                "empl_hffc_state": row[10],  # 재직상태(1, 2)
-                "empl_exctv_yn": row[11],  # 임원여부(Y/N)
+                "empl_lunisolar": row[31],  # 양음력
+                "empl_hffc_state": row[32],  # 재직상태
+                "empl_exctv_yn": row[11],  # 임원여부
                 "empl_photoid": row[12],  # 사진ID
-                "empl_frgnr_yn": row[13],  # 외국인여부(Y/N)
+                "empl_frgnr_yn": row[13],  # 외국인여부
                 "empl_telno": row[14],  # 전화번호
                 "empl_mobile_no": row[15],  # 휴대폰번호
                 "empl_retire_date": row[16],  # 퇴사일자
-                "empl_salary_form": row[17],  # 급여형태(공통코드)
+                "empl_salary_form": row[33],  # 급여형태
                 "empl_ssid": row[18],  # 주민번호
                 "empl_email": row[19],  # 이메일
-                "empl_emplyn_form": row[20],  # 고용형태(공통코드)
+                "empl_emplyn_form": row[34],  # 고용형태
                 "empl_mrig_anvsry": row[21],  # 결혼기념일
                 "empl_ssid_addr": row[22],  # 주민등록 주소
                 "empl_rlsdnc_addr": row[23],  # 실거주 주소
@@ -172,6 +233,8 @@ class EmployeeAPIViewSearch(APIView):
                 "empl_reg_id": row[26],  # 등록자
                 "empl_upt_dtime": row[27],  # 수정일시
                 "empl_upt_id": row[28],  # 수정자
+                "empl_frgnr_val": row[35],  # 내외국인 값
+                "empl_gender_val": row[36],  # 성별 값
             }
             print(serialized_empl)
             serialized_employees.append(serialized_empl)
